@@ -1,10 +1,7 @@
+require 'pineapples/actions/directory'
+
 module Pineapples
   module Actions
-    def replace_file(relative_path, *args)
-      remove_file(relative_path)
-      copy_file(relative_path, *args)
-    end
-
     def replace_in_file(relative_path, find, replace)
       path = File.join(destination_root, relative_path)
       contents = IO.read(path)

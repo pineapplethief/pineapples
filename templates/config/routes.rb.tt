@@ -1,0 +1,10 @@
+Rails.application.routes.draw do
+  <% if options.devise? %>
+  devise_for :users, controllers: {registrations: 'auth/registrations',
+                                   confirmations: 'auth/confirmations',
+                                   passwords:     'auth/passwords',
+                                   sessions:      'auth/sessions'}
+  <% end %>
+
+  root 'pages#home'
+end
