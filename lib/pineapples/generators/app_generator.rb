@@ -10,14 +10,14 @@ module Pineapples
     class AppGenerator < Rails::Generators::AppGenerator
       include Pineapples::Helpers
 
-      TEMPLATING_ENGINES = [:erb, :haml, :slim]
+      TEMPLATING_ENGINES = %w( erb haml slim )
 
       Thor::Base.shell = Thor::Shell::Color
 
       class_option :database, type: :string, aliases: '-d', default: 'postgresql',
         desc: "Configure for selected database (options: #{DATABASES.join("/")})"
 
-      class_option :template_engine, type: :symbol, default: :erb,
+      class_option :template_engine, type: :string, default: 'erb',
         desc: "Templating engine used in the app (options: #{TEMPLATING_ENGINES.join("/")})"
 
       class_option :heroku, type: :boolean, aliases: '-H', default: false,
@@ -38,7 +38,7 @@ module Pineapples
       class_option :carrierwave, type: :boolean,
         desc: 'Use carrierwave for image uploading and processing'
 
-      class_option :bootstrap, type: :boolean, default: false
+      class_option :bootstrap, type: :boolean, default: false,
         desc: 'Use Bootstrap as front-end framework'
 
       class_option :github, type: :string, aliases: '-G', default: nil,
@@ -141,6 +141,10 @@ module Pineapples
 
       def get_builder_class
         Pineapples::AppBuilder
+      end
+
+      def settings
+        @settings ||= Pineapples::Settings.new
       end
 
       # skip bundle install when testing generator
