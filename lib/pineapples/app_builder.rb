@@ -29,12 +29,12 @@ module Pineapples
       end
 
       if !options.skip_test?
-        copy_file '.rspec'
+        copy_file '.example.rspec'
       end
     end
 
     def app_files
-      directory 'app', except: 'user'
+      directory 'app', except: 'user.rb'
 
       inside 'app' do
         keep_file 'assets/fonts'

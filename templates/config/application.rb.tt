@@ -33,15 +33,17 @@ module <%= app_const_base %>
     require_all "#{Rails.root}/lib/simple_form"
 
     config.generators do |generate|
+      generate.scaffold_controller :responders_controller
       generate.helper false
+      generate.template_engine :erb
       generate.javascript_engine false
+      generate.stylesheets false
+
+      generate.test_framework :rspec
       generate.request_specs false
       generate.routing_specs false
-      generate.stylesheets false
-      generate.test_framework :rspec
       generate.view_specs false
     end
-    config.app_generators.scaffold_controller :responders_controller
 
     config.i18n.enforce_available_locales = true
 

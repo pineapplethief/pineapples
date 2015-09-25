@@ -8,8 +8,6 @@
 /.env
 /.foreman
 
-/config/database.yml
-
 /coverage/*
 
 /log

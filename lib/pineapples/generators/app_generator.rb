@@ -10,10 +10,15 @@ module Pineapples
     class AppGenerator < Rails::Generators::AppGenerator
       include Pineapples::Helpers
 
+      TEMPLATING_ENGINES = [:erb, :haml, :slim]
+
       Thor::Base.shell = Thor::Shell::Color
 
       class_option :database, type: :string, aliases: '-d', default: 'postgresql',
         desc: "Configure for selected database (options: #{DATABASES.join("/")})"
+
+      class_option :template_engine, type: :symbol, default: :erb,
+        desc: "Templating engine used in the app (options: #{TEMPLATING_ENGINES.join("/")})"
 
       class_option :heroku, type: :boolean, aliases: '-H', default: false,
         desc: 'Create staging and production Heroku apps'
@@ -52,6 +57,7 @@ module Pineapples
 
       def ask_user_preferences
         say 'ask_user_preferences'
+        say "#{Thor::Base.shell.class}"
         options[:heroku] = ask_with_default('Use Heroku for hosting?', 'yes').yes?
       end
 
