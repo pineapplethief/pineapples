@@ -8,28 +8,33 @@ module Pineapples
     attr_accessor :source_root, :templates_root, :target_dir
     attr_reader :app_name
 
-    def initialize(ARGV)
+    def initialize(argv)
+      parse_cli_arguments(argv)
     end
 
     def start!
       # do stuff
     end
 
-    protected
+    def templates_root
+      @templates_root ||= File.join(__dir__, 'templates')
+    end
 
     def source_paths
       @source_paths ||= []
     end
 
-    def templates_root
-      @templates_root ||= File.join(__dir__, 'lib/templates')
-    end
+    protected
 
     def templates_paths_for_search
       paths = []
       paths += templates_root
       paths << templates_root if templates_root
       paths
+    end
+
+    def parse_cli_arguments(argv)
+
     end
 
     # def settings

@@ -29,6 +29,7 @@ module Pineapples
 
       if option.has_default?
         ask_with_default(question, option.default_text)
+      end
     end
 
     def preexisting_git_repo?
