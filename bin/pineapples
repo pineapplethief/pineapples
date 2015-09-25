@@ -6,19 +6,19 @@ $LOAD_PATH << source_path
 
 require 'pineapples'
 
-module Pineapples
-  module Generators
-    class AppGenerator # :nodoc:
-      # We want to exit on failure to be kind to other libraries
-      # This is only when accessing via CLI
-      def self.exit_on_failure?
-        true
-      end
-    end
-  end
-end
+# module Pineapples
+#   module Generators
+#     class AppGenerator # :nodoc:
+#       # We want to exit on failure to be kind to other libraries
+#       # This is only when accessing via CLI
+#       def self.exit_on_failure?
+#         true
+#       end
+#     end
+#   end
+# end
 
-templates_root = File.expand_path(File.join('..', 'templates'), File.dirname(__FILE__))
-Pineapples::Generators::AppGenerator.source_root templates_root
-
-Pineapples::Generators::AppGenerator.start
+# templates_root = File.expand_path(File.join('..', 'templates'), File.dirname(__FILE__))
+generator = Pineapples::AppGenerator.new(ARGV)
+puts 'templates_root = ', generator.templates_root
+generator.start!

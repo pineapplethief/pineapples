@@ -24,12 +24,23 @@ module Pineapples
       ask 'Select one of the options above', select_color
     end
 
+    def ask_option(key)
+      option = fetch_option(key)
+
+      if option.has_default?
+        ask_with_default(question, option.default_text)
+    end
+
     def preexisting_git_repo?
       @preexisting_git_repo ||= (File.exist?('.git') || :nope)
       @preexisting_git_repo == true
     end
 
     private
+
+    def fetch_option(key)
+      self.class.class_options[key]
+    end
 
     def prompt_color
       :yellow

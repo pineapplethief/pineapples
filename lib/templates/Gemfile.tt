@@ -14,6 +14,7 @@ gem 'date_validator'
 <% if options.devise? %>
 gem 'devise'
 <% end %>
+gem 'email_validator'
 gem 'fast_blank'
 gem 'fixme', github: 'henrik/fixme'
 <% if options.user_role_field? %>

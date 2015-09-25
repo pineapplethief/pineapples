@@ -1,6 +1,7 @@
 # encoding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'pineapples/version'
 
 Gem::Specification.new do |spec|
@@ -32,6 +33,7 @@ Rails app generator based on Suspenders by Thoughtbot and Raygun by Carbon Five 
   spec.add_dependency 'rails', Pineapples::RAILS_VERSION
   spec.add_dependency 'bundler', '~> 1.10'
   spec.add_dependency 'colorize', '~> 0'
+  spec.add_dependency 'highline', '~> 1'
 
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'pry'
