@@ -18,7 +18,7 @@ require 'pineapples'
 #   end
 # end
 
-# templates_root = File.expand_path(File.join('..', 'templates'), File.dirname(__FILE__))
 options = Pineapples::Parser.parse(ARGV)
 generator = Pineapples::AppGenerator.new(options)
+
 generator.start!

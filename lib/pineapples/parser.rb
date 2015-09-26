@@ -8,7 +8,7 @@ module Pineapples
         opts.banner = 'Usage: pineapples [options] NEW_APP_DIRECTORY'
 
         opts.on('-h', '--help', 'Show pineapples usage') do
-          usage_and_exit(opts)
+          self.usage_and_exit(opts)
         end
 
         opts.on_tail('-v', '--version', 'Show version') do
@@ -25,11 +25,11 @@ module Pineapples
 
         options
       rescue OptionParser::InvalidOption
-        usage_and_exit(parser)
+        self.usage_and_exit(parser)
       end
     end
 
-    def usage_and_exit(parser)
+    def self.usage_and_exit(parser)
       say parser
       exit 1
     end

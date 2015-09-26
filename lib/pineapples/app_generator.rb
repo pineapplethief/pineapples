@@ -10,15 +10,14 @@ module Pineapples
 
     TEMPLATING_ENGINES = [:erb, :haml, :slim]
 
-    configure do
-      setting :template_engine, type: :string, default: 'erb', options: TEMPLATING_ENGINES,
-        prompt: 'Select templating engine used in the app?'
-    end
+    setting :template_engine, type: :string, default: 'erb', options: TEMPLATING_ENGINES,
+            prompt: 'Select templating engine used in the app?'
 
     attr_accessor :source_paths, :templates_root, :target_dir, :settings
 
     def initialize(options)
       @target_dir = options.target_dir
+      @settings = self.class.settings
     end
 
     def start!
@@ -48,10 +47,6 @@ module Pineapples
 
     def app_name
       @app_name ||= File.basename(target_dir).gsub(/\s+/, '-')
-    end
-
-    def settings
-      @settings ||= Hash.new
     end
 
     # def check_target

@@ -2,26 +2,32 @@ require 'pineapples/setting'
 
 module Pineapples
   module Settings
+    def settings
+      @settings
+    end
+
     def setting(name, opts)
       raw_setting = Pineapples::Setting.new(name, opts)
 
-      settings[name] = raw_setting
+      @settings ||= {}
 
-      attr_accessor name
+      self.settings[name] = raw_setting
+
+      puts self.inspect
+
+      define_method name do
+        self.settings[name].value
+      end
+
+      define_method :"#{name}=" do |value|
+        self.settings[name].value = value
+      end
 
       define_method :"#{name}?" do
         value = self.send(name)
         value.present?
       end
-
-      # set default value if applicable
-      send(:"#{name}=", raw_setting.default) if raw_setting.has_default?
     end
-
-    def configure(&block)
-      instance_eval &block
-    end
-    alias_method :configure, :config
 
   end
 end
