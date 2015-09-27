@@ -25,7 +25,7 @@ module Pineapples
     end
 
     def ask_user_settings
-      settings[:template_engine].ask
+      settings[:template_engine].ask_setting
     end
 
     def templates_root

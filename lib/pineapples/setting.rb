@@ -48,7 +48,7 @@ module Pineapples
       end
     end
 
-    def ask
+    def ask_setting
       if has_options?
         ask_with_options
       else
@@ -63,10 +63,12 @@ module Pineapples
     private
 
     def ask_with_options
-      menu = SettingMenu.new
+      menu = Highline::SettingMenu.new
       menu.header = header_string
+      menu.answer_type = get_type_class
       menu.default = default if has_default?
       menu.choices(*options) { |selected| self.value = selected }
+      say menu.inspect
 
       selected = ask(menu)
       menu.select(self, selected)
