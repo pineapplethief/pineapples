@@ -10,8 +10,8 @@ module Pineapples
 
     TEMPLATING_ENGINES = [:erb, :haml, :slim]
 
-    setting :template_engine, type: :string, default: 'erb', options: TEMPLATING_ENGINES,
-            prompt: 'Select templating engine used in the app?'
+    setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
+            prompt: 'Select templating engine used in the app'
 
     attr_accessor :source_paths, :templates_root, :target_dir, :settings
 
@@ -25,7 +25,7 @@ module Pineapples
     end
 
     def ask_user_settings
-
+      settings[:template_engine].ask
     end
 
     def templates_root
