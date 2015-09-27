@@ -1,14 +1,9 @@
-# require 'pineapples/highline/setting_menu'
-
 module Pineapples
   class Setting
     attr_reader :name, :type, :default, :question, :options
     attr_accessor :value
 
     VALID_TYPES = [:boolean, :numeric, :string, :symbol]
-
-    # MENU_LAYOUT = %(<%= header ? "#{header}:\n" : '' %>) +
-    #               "<%= list(menu, #{@flow.inspect}, #{@list_option.inspect}) %>"
 
     PROMPT = 'Select one of the options:'
 
@@ -27,7 +22,15 @@ module Pineapples
       @question = options[:prompt]
       @options  = Array(options[:options])
 
-      validate_default_type!
+      validate_options_type!
+      validate_type!(default)
+      validate_value_in_options!(default)
+    end
+
+    def value=(setting)
+      validate_type!(setting)
+      validate_value_in_options!(setting)
+      @value = setting
     end
 
     def valid_type?(type)
@@ -53,9 +56,9 @@ module Pineapples
         ask_with_options
       else
         if boolean?
-          agree(question_string)
+          ask_boolean
         else
-          ask(question_string, get_type_class)
+          ask
         end
       end
     end
@@ -63,55 +66,75 @@ module Pineapples
     private
 
     def ask_with_options
-      #menu = HighLine::SettingMenu.new
-      choose do |menu|
-        menu.header = header_string
-        menu.answer_type = get_type_class
-        menu.default = default if has_default?
-        menu.choices(*options) { |selected| self.value = selected }
-      end
-
-
-
-
-#      say menu.inspect
-
- #     selected = ask(menu)
-  #    menu.select(self, selected)
+      index = Ask.list(question_string, options, inquirer_options)
+      answer = options[index]
+      self.value = cast_to_type(answer)
     end
 
-    def header_string
-      header_string = question
-      # header_string << default_string if has_default?
+    def ask_boolean
+      self.value = Ask.confirm(question_string, inquirer_options)
+    end
+
+    def ask
+      answer = Ask.input(question, inquirer_options)
+      self.value = cast_to_type(answer)
     end
 
     def question_string
-      question_string = question
-      question_string << '?' if question_string[-1..1] != '?'
-      question_string << default_string if has_default?
-      question_string << '  '
+      has_default? ? question + default_string : question
     end
 
     def default_string
       " (default: #{default})"
     end
 
-    def validate_default_type!
-      default_type = case default
-                     when nil
-                       return
-                     when TrueClass, FalseClass
-                       :boolean
-                     when Numeric, Hash, Array, String, Symbol
-                       default.class.name.downcase.to_sym
-                     end
-      if default_type != type
-        raise ArgumentError, "Setting's default value must match its type."
+    def cast_to_type(setting)
+      case type
+      when :numeric
+        setting.to_f
+      when :string
+        setting.to_s
+      when :symbol
+        setting.to_sym
+      else
+        setting
+      end
+    end
+
+    def validate_type(setting)
+      value_type = case setting
+                   when nil
+                     return
+                   when TrueClass, FalseClass
+                     :boolean
+                   when Numeric, Hash, Array, String, Symbol
+                     setting.class.name.downcase.to_sym
+                   end
+      type == value_type
+    end
+
+    def validate_type!(setting)
+      if !validate_type(setting)
+        raise ArgumentError, "Setting's value must match its type."
+      end
+    end
+
+    def validate_value_in_options!(setting)
+      raise ArgumentError, "New setting value must be one of the options" if !options.include?(setting)
+    end
+
+    def validate_options_type!
+      if options.any?{ |option| !validate_type(option) }
+        raise ArgumentError, "Option #{option} value doesn't match setting type"
       end
     end
 
     def get_type_class
       Object.const_get(type.to_s.capitalize)
+    end
+
+    def inquirer_options
+      {clear: false, response: false}
     end
 
   end

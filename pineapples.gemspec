@@ -33,7 +33,8 @@ Rails app generator based on Suspenders by Thoughtbot and Raygun by Carbon Five 
   spec.add_dependency 'rails', Pineapples::RAILS_VERSION
   spec.add_dependency 'bundler', '~> 1.10'
   spec.add_dependency 'colorize', '~> 0'
-  spec.add_dependency 'highline', '~> 1'
+  #spec.add_dependency 'highline', '~> 2.0.0.pre.develop.2'
+  spec.add_dependency 'inquirer', '~> 0.2'
 
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'pry'

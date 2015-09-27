@@ -1,8 +1,9 @@
 require 'colorize'
 require 'fileutils'
 
-require 'highline/import'
-require 'pineapples/highline/menu_patch'
+require 'inquirer'
+# require 'highline/import'
+# require 'pineapples/highline/menu'
 
 require 'ostruct'
 require 'optparse'
