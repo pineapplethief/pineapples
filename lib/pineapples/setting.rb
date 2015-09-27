@@ -1,4 +1,4 @@
-require 'pineapples/highline/menu'
+require 'pineapples/highline/setting_menu'
 
 module Pineapples
   class Setting
@@ -63,15 +63,21 @@ module Pineapples
     private
 
     def ask_with_options
-      menu = Highline::SettingMenu.new
-      menu.header = header_string
-      menu.answer_type = get_type_class
-      menu.default = default if has_default?
-      menu.choices(*options) { |selected| self.value = selected }
-      say menu.inspect
+      #menu = HighLine::SettingMenu.new
+      choose do |menu|
+        menu.header = header_string
+        menu.answer_type = get_type_class
+        menu.default = default if has_default?
+        menu.choices(*options) { |selected| self.value = selected }
+      end
 
-      selected = ask(menu)
-      menu.select(self, selected)
+
+
+
+#      say menu.inspect
+
+ #     selected = ask(menu)
+  #    menu.select(self, selected)
     end
 
     def header_string

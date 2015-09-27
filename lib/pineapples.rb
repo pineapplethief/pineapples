@@ -9,4 +9,5 @@ require 'active_support/core_ext/object/blank'
 
 require 'pineapples/version'
 require 'pineapples/app_generator'
+require 'pineapples/highline/menu_patch'
 require 'pineapples/parser'
