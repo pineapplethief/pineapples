@@ -1,4 +1,4 @@
-require 'pineapples/highline/setting_menu'
+# require 'pineapples/highline/setting_menu'
 
 module Pineapples
   class Setting
