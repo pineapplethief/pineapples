@@ -5,8 +5,6 @@ module Pineapples
 
     VALID_TYPES = [:boolean, :numeric, :string, :symbol]
 
-    PROMPT = 'Select one of the options:'
-
     def initialize(name, options = {})
       raise ArgumentError, "option name can't be nil" if name.nil?
       raise ArgumentError, "type can't be nil"        if options[:type].nil?
@@ -66,7 +64,7 @@ module Pineapples
     private
 
     def ask_with_options
-      index = Ask.list(question_string, options, inquirer_options)
+      index = Ask.list(question_string, options_with_color, inquirer_options)
       answer = options[index]
       self.value = cast_to_type(answer)
     end
@@ -76,12 +74,18 @@ module Pineapples
     end
 
     def ask
-      answer = Ask.input(question, inquirer_options)
+      answer = Ask.input(question_string, inquirer_options)
       self.value = cast_to_type(answer)
     end
 
     def question_string
-      has_default? ? question + default_string : question
+      result = question
+      result << default_string if has_default?
+      result.light_yellow
+    end
+
+    def options_with_color
+      options.map{ |option| option.to_s.light_blue }
     end
 
     def default_string
