@@ -39,11 +39,12 @@ module Pineapples
 
     def find_in_source_paths(file)
       files_to_search = [file, file + TEMPLATE_EXTNAME]
-      relative_root = relative_to_original_destination_root(app_root, false)
+      # relative_root = relative_to_original_destination_root(app_root, false)
+      sources = source_paths_for_search
 
-      source_paths.each do |source_path|
+      sources.each do |source_path|
         files_to_search.each do |file|
-          source_file = File.expand_path(file, File.join(source_path, relative_root))
+          source_file = File.expand_path(file, source_path)
           return source_file if File.exist?(source_file)
         end
       end
@@ -54,10 +55,10 @@ module Pineapples
         message << "Please set your generator instance template_root to PATH with the PATH containing your templates."
       end
 
-      if source_paths.empty?
+      if sources.empty?
         message << "Currently you have no source paths."
       else
-        message << "Your current source paths are: \n#{source_paths.join("\n")}"
+        message << "Your current source paths are: \n#{sources.join("\n")}"
       end
 
       raise Error, message
@@ -69,9 +70,10 @@ module Pineapples
 
       action = action.to_s.rjust(12)
 
-      if behaviour == :invoke
+      case behaviour
+      when :invoke
         action = action.green
-      elsif behaviour = :revoke
+      when :revoke
         action = action.red
       end
 

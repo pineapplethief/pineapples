@@ -20,6 +20,7 @@ module Pineapples
       @behaviour = options.behaviour || :invoke
       @app_root = File.expand_path(app_name)
       @settings = self.class.settings
+      @debug = options.debug || false
     end
 
     def start!
@@ -27,6 +28,9 @@ module Pineapples
       create_app_root
 
       ask_user_settings
+    rescue Pineapples::Error => error
+      (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
+      exit 1
     end
 
     def ask_user_settings
@@ -44,6 +48,10 @@ module Pineapples
 
     def create_app_root
       FileUtils::mkdir_p(app_root)
+    end
+
+    def debug?
+      @debug
     end
 
   end
