@@ -6,19 +6,8 @@ $LOAD_PATH << source_path
 
 require 'pineapples'
 
-# module Pineapples
-#   module Generators
-#     class AppGenerator # :nodoc:
-#       # We want to exit on failure to be kind to other libraries
-#       # This is only when accessing via CLI
-#       def self.exit_on_failure?
-#         true
-#       end
-#     end
-#   end
-# end
+$terminal.indent_size = 2
 
 options = Pineapples::Parser.parse(ARGV)
 generator = Pineapples::AppGenerator.new(options)
-
 generator.start!

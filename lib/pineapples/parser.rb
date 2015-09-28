@@ -2,7 +2,7 @@ module Pineapples
   class Parser
     def self.parse(args)
       options = OpenStruct.new
-      options.target_dir = nil
+      options.app_name = nil
 
       parser = OptionParser.new do |opts|
         opts.banner = 'Usage: pineapples [options] NEW_APP_DIRECTORY'
@@ -19,9 +19,9 @@ module Pineapples
 
       begin
         parser.parse!
-        options.target_dir = ARGV.first
+        options.app_name = ARGV.first
 
-        raise OptionParser::InvalidOption if options.target_dir.nil?
+        raise OptionParser::InvalidOption if options.app_name.nil?
 
         options
       rescue OptionParser::InvalidOption

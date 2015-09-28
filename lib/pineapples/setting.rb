@@ -64,24 +64,31 @@ module Pineapples
     private
 
     def ask_with_options
+      puts
       index = Ask.list(question_string, options_with_color, inquirer_options)
+      puts
       answer = options[index]
       self.value = cast_to_type(answer)
     end
 
     def ask_boolean
+      puts
       self.value = Ask.confirm(question_string, inquirer_options)
+      puts
     end
 
     def ask
+      puts
       answer = Ask.input(question_string, inquirer_options)
+      puts
+
       self.value = cast_to_type(answer)
     end
 
     def question_string
-      result = question
+      result = ' ' * $terminal.indent_size
+      result << question.light_yellow
       result << default_string if has_default?
-      result.light_yellow
     end
 
     def options_with_color
@@ -89,7 +96,7 @@ module Pineapples
     end
 
     def default_string
-      " (default: #{default})"
+      " (default: #{default})".light_green
     end
 
     def cast_to_type(setting)
@@ -108,7 +115,7 @@ module Pineapples
     def validate_type(setting)
       value_type = case setting
                    when nil
-                     return
+                     return true
                    when TrueClass, FalseClass
                      :boolean
                    when Numeric, Hash, Array, String, Symbol
