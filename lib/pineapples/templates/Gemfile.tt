@@ -11,13 +11,13 @@ gem 'postgres_ext'
 gem 'schema_plus'
 
 gem 'date_validator'
-<% if options.devise? %>
+<% if devise? %>
 gem 'devise'
 <% end %>
 gem 'email_validator'
 gem 'fast_blank'
 gem 'fixme', github: 'henrik/fixme'
-<% if options.user_role_field? %>
+<% if user_role_field? %>
 gem 'highline', require: false
 <% end %>
 gem 'hiredis'
@@ -37,11 +37,11 @@ gem 'virtus'
 
 # Front-end gems
 gem 'autoprefixer-rails'
-<% if options.bootstrap? %>
+<% if bootstrap? %>
 gem 'bootstrap-sass', '~> 3.3.5'
 <% end %>
 gem 'coffee-rails', '~> 4.1.0'
-<% if options.bootstrap? %>
+<% if bootstrap? %>
 gem 'font-awesome-rails'
 <% end %>
 gem 'jquery-rails'
@@ -50,7 +50,7 @@ gem 'momentjs-rails'
 gem 'uglifier', '>= 1.3.0'
 
 group :production do
-  <% if options.heroku? %>
+  <% if heroku? %>
     gem 'heroku-deflater'
     gem 'puma'
     gem 'rack-timeout'
@@ -72,12 +72,11 @@ group :development do
 end
 
 group :test do
-
+  gem 'rspec-rails', '~> 3.2'
+  gem 'shoulda'
 end
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.0'
-  gem 'shoulda'
   gem 'spring'
   gem 'web-console', '~> 2.0'
 end

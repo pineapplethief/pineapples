@@ -1,5 +1,6 @@
 require 'pineapples/actions'
 require 'pineapples/actions/rails/rails'
+require 'pineapples/helpers'
 require 'pineapples/settings'
 
 module Pineapples
@@ -17,6 +18,18 @@ module Pineapples
     setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
             prompt: 'Select templating engine to be used in the app'
 
+    setting :carrierwave, type: :boolean, default: false,
+            prompt: 'Wanna use Carrierwave for file uploads?'
+
+    setting :devise, type: :boolean, default: true,
+            prompt: 'Wanna use Devise for authentication?'
+
+    setting :pundit, type: :boolean, default: true,
+            prompt: 'Wanna use Pundit for authorization?'
+
+    setting :user_role_field, type: :boolean, default: true,
+            prompt: 'Wanna add role attribute to users model as simple user roles solution?'
+
     attr_accessor :app_name,
                   :app_root,
                   :settings
@@ -32,11 +45,13 @@ module Pineapples
     end
 
     def start!
-      valid_const!
+      valid_const! && check_target!
       create_app_root
       ask_user_settings
 
       create_root_files
+      #create_app_files
+      #run_after_bundle_callbacks
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
       exit 1
@@ -47,17 +62,40 @@ module Pineapples
       # settings[:template_engine].ask_setting
     end
 
-    def run_after_bundle_callbacks
-      @after_bundle_callbacks.each(&:call)
-    end
-
     def create_root_files
+      copy_file '.editor-config'
+      template '.example.env'
+      copy_file '.example.rspec'
+      copy_file '.gitignore'
+      copy_file 'browserlist'
+      template 'config.ru'
+      template 'Gemfile'
+      copy_file 'Guardfile'
+      copy_file 'Procfile'
+      copy_file 'Rakefile'
       template 'README.md', 'README.md'
       if heroku?
         copy_file '.buildpacks'
         copy_file 'Aptfile'
       end
-      #directory
+    end
+
+    def create_app_files
+      directory 'app'
+    end
+
+    def create_bin_files
+    end
+
+    def create_config_files
+    end
+
+    def create_db_files
+
+    end
+
+    def run_after_bundle_callbacks
+      @after_bundle_callbacks.each(&:call)
     end
 
     def debug?
@@ -79,9 +117,8 @@ module Pineapples
     protected
 
     def create_app_root
-      check_target!
-      #FileUtils::mkdir_p(app_root)
-      empty_directory '.'
+      FileUtils::mkdir_p(app_root)
+      say_status :create_root, 'Created application root'
     end
 
     def check_target!

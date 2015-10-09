@@ -2,14 +2,14 @@ require_dependency 'application_responder'
 require_dependency 'ipaddr'
 
 class ApplicationController < ActionController::Base
-  <% if options.pundit? %>
+  <% if pundit? %>
   include Pundit
   <% end %>
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  <% if options.pundit? %>
+  <% if pundit? %>
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   <% end %>
 
@@ -17,17 +17,18 @@ class ApplicationController < ActionController::Base
     ApplicationResponder
   end
 
-  <% if options.devise? %>
+  <% if devise? %>
   def guest_user?
     !current_user
   end
   <% end %>
 
-  <% if options.user_role_field? %>
+  <% if user_role_field? %>
   def guest_user
     User.guest
   end
   <% end %>
+
 
 
   protected
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::Base
     request.local? || local_network === request.remote_ip
   end
 
-  <% if options.pundit? %>
+  <% if pundit? %>
   def user_not_authorized(exception)
     flash[:error] = 'You are not authorized to perform this action.'
     redirect_to(request.referrer || root_path)

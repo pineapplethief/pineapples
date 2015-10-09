@@ -3,6 +3,10 @@ module Pineapples
 
     RESERVED_NAMES = %w[application destroy plugin runner test]
 
+    def needs_user_model?
+      user_role_field? || devise?
+    end
+
     protected
 
     def app_const_base

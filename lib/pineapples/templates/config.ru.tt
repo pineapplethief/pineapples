@@ -1,6 +1,6 @@
 require ::File.expand_path('../config/environment', __FILE__)
 
-<% if options.carrierwave? && options.heroku? %>
+<% if carrierwave? && heroku? %>
 use Rack::Static, urls: ['/carrierwave'], root: 'tmp'
 <% end %>
 

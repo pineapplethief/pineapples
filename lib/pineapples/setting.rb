@@ -36,7 +36,7 @@ module Pineapples
     end
 
     def has_default?
-      @default.present?
+      @default || (@default == false)
     end
 
     def has_options?
@@ -73,8 +73,9 @@ module Pineapples
 
     def ask_boolean
       puts
-      self.value = Ask.confirm(question_string, inquirer_options)
+      answer = Ask.confirm(question_string, inquirer_options)
       puts
+      self.value = cast_to_type(answer)
     end
 
     def ask
@@ -131,7 +132,9 @@ module Pineapples
     end
 
     def validate_value_in_options!(setting)
-      raise ArgumentError, "New setting value must be one of the options" if !options.include?(setting)
+      if has_options? && !options.include?(setting)
+        raise ArgumentError, "New setting value must be one of the options"
+      end
     end
 
     def validate_options_type!

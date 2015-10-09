@@ -9,9 +9,6 @@ module Pineapples
       # Reference to AppGenerator instance
       attr_reader :generator
 
-      # accessor to hold current action symbol (used to determine text color in say_action)
-      attr_accessor :status
-
       attr_reader :colors
 
       # Options hash
@@ -61,10 +58,7 @@ module Pineapples
       end
 
       def color(status)
-        puts "colors = #{self.class.colors}"
         color = self.class.colors[status]
-        puts "status = #{status}"
-        puts "color = #{color}"
         color = STATUS_COLORS[color] if STATUS_COLORS.keys.include?(color)
       end
 
