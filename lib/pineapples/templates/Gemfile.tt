@@ -4,22 +4,22 @@ ruby '<%= RUBY_VERSION %>'
 
 gem 'dotenv-rails', groups: [:development, :test]
 
-gem 'rails', '<%= Rails.version %>'
+gem 'rails', '<%= RAILS_VERSION %>'
 
 gem 'pg'
 gem 'postgres_ext'
 gem 'schema_plus'
 
 gem 'date_validator'
-<% if devise? %>
+<% if devise? -%>
 gem 'devise'
-<% end %>
+<% end -%>
 gem 'email_validator'
 gem 'fast_blank'
 gem 'fixme', github: 'henrik/fixme'
-<% if user_role_field? %>
+<% if user_role_field? -%>
 gem 'highline', require: false
-<% end %>
+<% end -%>
 gem 'hiredis'
 gem 'pry-byebug'
 gem 'pry-rails'
@@ -37,27 +37,27 @@ gem 'virtus'
 
 # Front-end gems
 gem 'autoprefixer-rails'
-<% if bootstrap? %>
+<% if bootstrap? -%>
 gem 'bootstrap-sass', '~> 3.3.5'
-<% end %>
+<% end -%>
 gem 'coffee-rails', '~> 4.1.0'
-<% if bootstrap? %>
+<% if bootstrap? -%>
 gem 'font-awesome-rails'
-<% end %>
+<% end -%>
 gem 'jquery-rails'
 gem 'sassc-rails'
 gem 'momentjs-rails'
 gem 'uglifier', '>= 1.3.0'
 
 group :production do
-  <% if heroku? %>
+  <% if heroku? -%>
     gem 'heroku-deflater'
     gem 'puma'
     gem 'rack-timeout'
     gem 'rails_12factor'
-  <% else %>
+  <% else -%>
     gem 'puma'
-  <% end %>
+  <% end -%>
 end
 
 group :development do

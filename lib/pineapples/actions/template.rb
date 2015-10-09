@@ -22,10 +22,11 @@ module Pineapples
       target = args.first || source.sub(/#{TEMPLATE_EXTNAME}$/, '')
 
       source  = File.expand_path(find_in_source_paths(source.to_s))
-      context = options.delete(:context) || instance_eval('binding')
+      context = options.delete(:context) || binding #instance_eval('binding')
 
       create_file(target, nil, options) do
-        content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
+        template = File.binread(source)
+        content = ERB.new(template, nil, '-').result(context)
         content = block.call(content) if block
         content
       end

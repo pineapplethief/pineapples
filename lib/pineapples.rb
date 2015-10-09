@@ -5,6 +5,7 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/string/inflections'
 
 require 'English'
+#require 'erb'
 require 'fileutils'
 require 'ostruct'
 require 'optparse'

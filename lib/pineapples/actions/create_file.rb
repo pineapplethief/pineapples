@@ -1,4 +1,5 @@
 require_relative 'empty_directory'
+
 module Pineapples
   module Actions
     # Create a new file relative to the destination root with the given data,
@@ -86,7 +87,7 @@ module Pineapples
         if identical?
           say_status :identical
         else
-          force_or_skip_on_conflict(options[:force], options[:skip], &block)
+          force_or_skip_or_conflict(options[:force], options[:skip], &block)
         end
       end
 

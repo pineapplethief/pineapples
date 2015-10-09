@@ -15,9 +15,6 @@ module Pineapples
     setting :heroku, type: :boolean, default: false,
             prompt: 'Wanna use Heroku?'
 
-    setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
-            prompt: 'Select templating engine to be used in the app'
-
     setting :carrierwave, type: :boolean, default: false,
             prompt: 'Wanna use Carrierwave for file uploads?'
 
@@ -29,6 +26,12 @@ module Pineapples
 
     setting :user_role_field, type: :boolean, default: true,
             prompt: 'Wanna add role attribute to users model as simple user roles solution?'
+
+    setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
+            prompt: 'Select templating engine to be used in the app'
+
+    setting :bootstrap, type: :boolean, default: false,
+            prompt: 'Wanna use Bootstrap on this project?'
 
     attr_accessor :app_name,
                   :app_root,
@@ -47,7 +50,7 @@ module Pineapples
     def start!
       valid_const! && check_target!
       create_app_root
-      ask_user_settings
+      # ask_user_settings
 
       create_root_files
       #create_app_files
@@ -59,7 +62,7 @@ module Pineapples
 
     def ask_user_settings
       settings[:heroku].ask_setting
-      # settings[:template_engine].ask_setting
+      settings[:template_engine].ask_setting
     end
 
     def create_root_files
