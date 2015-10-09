@@ -2,7 +2,9 @@ describe Pineapples::Actions do
   let(:generator) do
     options = OpenStruct.new(app_name: PineapplesTestHelpers::APP_NAME,
                              app_root: app_path.to_s)
-    Pineapples::AppGenerator.new(options)
+    generator = Pineapples::AppGenerator.new(options)
+    generator.source_paths << fixtures_path
+    generator
   end
 
   before(:each) do
@@ -101,6 +103,22 @@ describe Pineapples::Actions do
       generator.inside('app') {}
 
       expect(File).to exist("#{app_path}/app")
+    end
+  end
+
+  describe '#template' do
+    it 'creates file from the template with proper name' do
+      generator.template('sample.tt')
+
+      expect(File).to exist("#{app_path}/sample")
+    end
+
+    it 'evaluates ERB in the template in context of generator instance' do
+      generator.template('sample.tt')
+
+      content = File.read("#{app_path}/sample")
+
+      expect(content).to eq(generator.app_name.humanize + "\r\n")
     end
   end
 

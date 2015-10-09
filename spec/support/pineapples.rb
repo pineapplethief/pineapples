@@ -52,7 +52,11 @@ module PineapplesTestHelpers
   end
 
   def root_path
-    File.expand_path('../../../', __FILE__)
+    File.expand_path('../../', __dir__)
+  end
+
+  def fixtures_path
+    File.expand_path('../fixtures', __dir__)
   end
 
 end

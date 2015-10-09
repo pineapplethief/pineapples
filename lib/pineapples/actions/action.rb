@@ -17,6 +17,12 @@ module Pineapples
       # Options hash
       attr_accessor :options
 
+      # Let status colors set by .status_color macro be inherited
+      def self.inherited(child_class)
+        super
+        child_class.instance_variable_set('@colors', self.colors)
+      end
+
       def self.status_color(status, color)
         colors[status] = color
       end
@@ -55,7 +61,10 @@ module Pineapples
       end
 
       def color(status)
+        puts "colors = #{self.class.colors}"
         color = self.class.colors[status]
+        puts "status = #{status}"
+        puts "color = #{color}"
         color = STATUS_COLORS[color] if STATUS_COLORS.keys.include?(color)
       end
 

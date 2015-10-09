@@ -7,11 +7,15 @@ module Pineapples
     extend Pineapples::Settings
     prepend Pineapples::Actions
     include Pineapples::Actions::Rails
+    include Pineapples::Helpers
 
     TEMPLATING_ENGINES = [:erb, :haml, :slim]
 
+    setting :heroku, type: :boolean, default: false,
+            prompt: 'Wanna use Heroku?'
+
     setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
-            prompt: 'Select templating engine used in the app'
+            prompt: 'Select templating engine to be used in the app'
 
     attr_accessor :app_name,
                   :app_root,
@@ -28,6 +32,7 @@ module Pineapples
     end
 
     def start!
+      valid_const!
       create_app_root
       ask_user_settings
 
@@ -38,7 +43,8 @@ module Pineapples
     end
 
     def ask_user_settings
-      settings[:template_engine].ask_setting
+      settings[:heroku].ask_setting
+      # settings[:template_engine].ask_setting
     end
 
     def run_after_bundle_callbacks
@@ -47,6 +53,11 @@ module Pineapples
 
     def create_root_files
       template 'README.md', 'README.md'
+      if heroku?
+        copy_file '.buildpacks'
+        copy_file 'Aptfile'
+      end
+      #directory
     end
 
     def debug?
@@ -67,16 +78,17 @@ module Pineapples
 
     protected
 
+    def create_app_root
+      check_target!
+      #FileUtils::mkdir_p(app_root)
+      empty_directory '.'
+    end
+
     def check_target!
       if Dir["#{app_root}/*"].present?
         puts "I won't grow pineapples there, the target directory isn't empty."
         exit 1
       end
-    end
-
-    def create_app_root
-      check_target!
-      FileUtils::mkdir_p(app_root)
     end
 
   end

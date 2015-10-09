@@ -73,10 +73,11 @@ module Pineapples
         lookup = file_level_lookup(lookup)
 
         excluded_files = Array(options[:exclude])
+        exclude_pattern = options[:exclude_pattern]
 
         files(lookup).sort.each do |file_source|
           next if File.directory?(file_source)
-          next if options[:exclude_pattern] && file_source.match(options[:exclude_pattern])
+          next if exclude_pattern && file_source.match(exclude_pattern)
           next if excluded_files.any? do |excluded_file|
             File.basename(excluded_file) == File.basename(file_source)
           end

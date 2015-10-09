@@ -2,6 +2,7 @@ require 'colorize'
 require 'highline/import'
 require 'inquirer'
 require 'active_support/core_ext/object/blank'
+require 'active_support/core_ext/string/inflections'
 
 require 'English'
 require 'fileutils'

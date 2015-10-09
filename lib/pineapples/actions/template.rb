@@ -8,8 +8,8 @@ module Pineapples
     #
     # ==== Parameters
     # source<String>:: the relative path to the source root.
-    # destination<String>:: the relative path to the destination root.
-    # config<Hash>:: give :verbose => false to not log the status.
+    # target<String>:: the relative path to the destination root.
+    # options<Hash>:: give :verbose => false to not log the status.
     #
     # ==== Examples
     #
@@ -24,7 +24,7 @@ module Pineapples
       source  = File.expand_path(find_in_source_paths(source.to_s))
       context = options.delete(:context) || instance_eval('binding')
 
-      create_file(target, nil, config) do
+      create_file(target, nil, options) do
         content = ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
         content = block.call(content) if block
         content
