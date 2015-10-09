@@ -1,5 +1,5 @@
 class FakeHeroku
-  RECORDER = File.expand_path(File.join('..', '..', 'tmp', 'heroku_commands'), File.dirname(__FILE__))
+  RECORDER = File.expand_path('../../tmp/heroku_commands', __dir__)
 
   def initialize(args)
     @args = args
@@ -15,8 +15,8 @@ class FakeHeroku
     FileUtils.rm_rf RECORDER
   end
 
-  def self.has_gem_included?(project_path, gem_name)
-    gemfile = File.open(File.join(project_path, 'Gemfile'), 'a')
+  def self.has_gem_included?(app_path, gem_name)
+    gemfile = File.open(File.join(app_path, 'Gemfile'), 'a')
 
     File.foreach(gemfile).any? do |line|
       line.match(/#{Regexp.quote(gem_name)}/)

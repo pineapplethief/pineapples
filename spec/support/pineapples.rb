@@ -1,14 +1,6 @@
 module PineapplesTestHelpers
   APP_NAME = 'dummy_app'
 
-  def remove_project_directory
-    FileUtils.rm_rf(project_path)
-  end
-
-  def create_tmp_directory
-    FileUtils.mkdir_p(tmp_path)
-  end
-
   def run_pineapples(arguments = nil)
     Dir.chdir(tmp_path) do
       Bundler.with_clean_env do
@@ -19,9 +11,25 @@ module PineapplesTestHelpers
     end
   end
 
+  def create_app_directory
+    FileUtils.mkdir_p(app_path)
+  end
+
+  def remove_app_directory
+    FileUtils.rm_rf(app_path)
+  end
+
+  def create_tmp_directory
+    FileUtils.mkdir_p(tmp_path)
+  end
+
+  def remove_tmp_directory
+    FileUtils.rm_rf(tmp_path)
+  end
+
   def drop_dummy_database
-    if File.exist?(project_path)
-      Dir.chdir(project_path) do
+    if File.exist?(app_path)
+      Dir.chdir(app_path) do
         Bundler.with_clean_env do
           `rake db:drop`
         end
@@ -29,8 +37,8 @@ module PineapplesTestHelpers
     end
   end
 
-  def project_path
-    @project_path ||= Pathname.new("#{tmp_path}/#{APP_NAME}")
+  def app_path
+    @app_path ||= Pathname.new("#{tmp_path}/#{APP_NAME}")
   end
 
   private

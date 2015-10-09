@@ -3,9 +3,11 @@ require 'highline/import'
 require 'inquirer'
 require 'active_support/core_ext/object/blank'
 
+require 'English'
 require 'fileutils'
 require 'ostruct'
 require 'optparse'
+require 'pathname'
 require 'securerandom'
 
 require 'pineapples/version'

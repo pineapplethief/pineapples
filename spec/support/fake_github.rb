@@ -1,5 +1,5 @@
 class FakeGithub
-  RECORDER = File.expand_path(File.join('..', '..', 'tmp', 'hub_commands'), File.dirname(__FILE__))
+  RECORDER = File.expand_path('../../tmp/hub_commands', __dir__)
 
   def initialize(args)
     @args = args

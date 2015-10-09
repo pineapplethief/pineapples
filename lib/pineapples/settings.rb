@@ -13,8 +13,6 @@ module Pineapples
 
       self.settings[name] = raw_setting
 
-      puts self.inspect
-
       define_method name do
         self.settings[name].value
       end

@@ -1,16 +1,40 @@
-require 'find'
+require 'fileutils'
+require 'pathname'
+require 'uri'
 require 'pineapples/actions/action'
+require 'pineapples/actions/apply'
+require 'pineapples/actions/chmod'
+require 'pineapples/actions/copy_file'
+require 'pineapples/actions/create_file'
+require 'pineapples/actions/empty_directory'
+require 'pineapples/actions/get'
+require 'pineapples/actions/insert_into_file'
+require 'pineapples/actions/inside'
 require 'pineapples/actions/shell'
+require 'pineapples/actions/template'
 
 module Pineapples
   module Actions
     TEMPLATE_EXTNAME = '.tt'
 
+    DEFAULT_COLOR = :light_green
+
     attr_reader :behaviour
 
     def initialize(options)
       super
+
       @behaviour = options.behaviour || :invoke
+    end
+
+    # Executes instance of Action subclass depending on generator behaviour
+    def action(instance) #:nodoc:
+      return if instance.skip?
+      if behaviour == :invoke
+        instance.invoke!
+      else
+        instance.revoke!
+      end
     end
 
     def templates_root
@@ -28,18 +52,21 @@ module Pineapples
       paths
     end
 
-    def relative_to_original_destination_root(path, remove_dot = true)
-      path = path.dup
-      if path.gsub!(source_paths.first, '.')
-        remove_dot ? (path[2..-1] || "") : path
-      else
-        path
-      end
+    # dir argument must me absolute path
+    def relative_to_app_root(dir)
+      @app_root_pathname ||= Pathname.new(app_root)
+      path = Pathname.new(dir)
+      path.relative_path_from(@app_root_pathname)
+    end
+
+    def relative_to_current_app_dir(dir)
+      current_app_path = Pathname.new(current_app_dir)
+      path = Pathname.new(dir)
+      path.relative_path_from(current_app_path)
     end
 
     def find_in_source_paths(file)
       files_to_search = [file, file + TEMPLATE_EXTNAME]
-      # relative_root = relative_to_original_destination_root(app_root, false)
       sources = source_paths_for_search
 
       sources.each do |source_path|
@@ -64,22 +91,23 @@ module Pineapples
       raise Error, message
     end
 
-    def say_action(action, message, log_status = true)
-      return if !log_status
-      spaces = $terminal.indentation
+    def say_status(status, message, color = :light_green, log = true)
+      return if !log
 
-      action = action.to_s.rjust(12)
+      spaces = ' ' * $terminal.indent_size * 2
 
-      case behaviour
-      when :invoke
-        action = action.green
-      when :revoke
-        action = action.red
-      end
+      status = status.to_s.rjust(12)
+      status = status.colorize(color)
 
-      output = "#{action}#{spaces}#{message}"
+      output = "#{status}#{spaces}#{message}"
 
-      say output
+      say(output)
+    end
+
+    def indent(verbose = true, level_increment = 1)
+      $terminal.indent_level += level_increment if verbose
+      yield
+      $terminal.indent_level -= level_increment if verbose
     end
 
   end
