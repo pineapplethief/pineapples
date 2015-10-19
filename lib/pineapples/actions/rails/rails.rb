@@ -1,4 +1,4 @@
-require_relative 'views_converters'
+require_relative 'erb_converters'
 
 module Pineapples
   module Actions

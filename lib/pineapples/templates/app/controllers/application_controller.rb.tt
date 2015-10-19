@@ -4,25 +4,26 @@ require_dependency 'ipaddr'
 class ApplicationController < ActionController::Base
 <% if pundit? -%>
   include Pundit
+
 <% end -%>
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-
 <% if pundit? -%>
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-<% end -%>
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+<% end -%>
   def self.responder
     ApplicationResponder
   end
-
 <% if devise? -%>
+
   def guest_user?
     !current_user
   end
-<% end -%>
 
+<% end -%>
 <% if user_role_field? -%>
   def guest_user
     User.guest
@@ -37,12 +38,11 @@ class ApplicationController < ActionController::Base
     local_network = IPAddr.new('192.168.0.0/8')
     request.local? || local_network === request.remote_ip
   end
-
 <% if pundit? -%>
+
   def user_not_authorized(exception)
     flash[:error] = 'You are not authorized to perform this action.'
     redirect_to(request.referrer || root_path)
   end
 <% end -%>
-
 end
