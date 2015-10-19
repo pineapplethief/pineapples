@@ -57,7 +57,7 @@ module Pineapples
       end
 
       def invoke!
-        generator.empty_directory(given_target, options)
+        generator.empty_directory(target.given, options)
         execute!
       end
 
@@ -82,13 +82,13 @@ module Pineapples
             File.basename(excluded_file) == File.basename(file_source)
           end
 
-          file_target = File.join(given_target, file_source.gsub(source, '.'))
+          file_target = File.join(target.given, file_source.gsub(source, '.'))
           file_target.gsub!('/./', '/')
 
           case file_source
           when /\.empty_directory$/
             dirname = File.dirname(file_target).gsub(/\/\.$/, '')
-            next if dirname == given_target
+            next if dirname == target.given
             generator.empty_directory(dirname, options)
           when /#{TEMPLATE_EXTNAME}$/
             generator.template(file_source, file_target[0..-4], options, &@block)

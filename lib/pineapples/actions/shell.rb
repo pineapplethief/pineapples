@@ -4,7 +4,7 @@ module Pineapples
     #
     # ==== Parameters
     # command<String>:: the command to be executed.
-    # config<Hash>:: give :verbose => false to not log the status, :capture => true to hide to output. Specify :with
+    # options<Hash>:: give :verbose => false to not log the status, :capture => true to hide to output. Specify :with
     #                to append an executable to command execution.
     #
     # ==== Example
@@ -13,25 +13,28 @@ module Pineapples
     #     shell 'ln -s ~/edge rails'
     #   end
     #
-    def shell(command, config = {})
+    def shell(command, options = {})
       return if behavior == :revoke
 
-      verbose = config.fetch(:verbose, verbose?)
-      execute = !config.fetch(:pretend, pretend?)
+      verbose = options.fetch(:verbose, verbose?)
+      execute = !options.fetch(:pretend, pretend?)
 
       description = "#{command} from #{current_app_dir.inspect}"
-      if config[:with]
-        description = "#{File.basename(config[:with].to_s)} #{desc}"
-        command = "#{config[:with]} #{command}"
+
+      executable = options[:with].to_s
+
+      if executable.present?
+        description = "#{File.basename(executable)} #{desc}"
+        command = "#{executable} #{command}"
       end
 
       say_action(:shell, description, verbose)
 
       if execute
         config[:capture] ? `#{command}` : system("#{command}")
+        raise Error, "#{command} failed with status #{$CHILD_STATUS.exitstatus}." if not $CHILD_STATUS.success?
       end
-
-      raise Error, "#{command} failed with status #{$CHILD_STATUS.exitstatus}." if not $CHILD_STATUS.success?
     end
+
   end
 end

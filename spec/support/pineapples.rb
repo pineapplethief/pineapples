@@ -41,6 +41,15 @@ module PineapplesTestHelpers
     @app_path ||= Pathname.new("#{tmp_path}/#{APP_NAME}")
   end
 
+  def generator
+    @options ||= OpenStruct.new(app_name: APP_NAME, app_root: app_path.to_s)
+    if @generator.nil?
+      @generator = Pineapples::AppGenerator.new(@options)
+      @generator.source_paths << fixtures_path
+    end
+    @generator
+  end
+
   private
 
   def tmp_path

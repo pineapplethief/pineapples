@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  <% if user_role_field? -%>
+<% if user_role_field? -%>
   as_enum :role, [:guest, :regular, :trusted, :moderator, :admin],
           source: :role, map: :string, accessor: :whiny
 
@@ -18,12 +18,12 @@ class User < ActiveRecord::Base
   def regular?
     persisted? && role == :regular
   end
-  <% end -%>
+<% end -%>
 
-  <% if devise? -%>
+<% if devise? -%>
   def send_devise_notification(notification, *args)
     devise_mailer.send(notification, self, *args).deliver_later
   end
-  <% end -%>
+<% end -%>
 
 end

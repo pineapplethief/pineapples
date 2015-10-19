@@ -26,7 +26,7 @@ module Pineapples
       source = File.expand_path(find_in_source_paths(source.to_s)) unless source =~ %r{^https?\://}
       render = open(source) { |input| input.binmode.read }
 
-      target ||= if block_given?
+      target ||= if block
                    block.arity == 1 ? block.call(render) : block.call
                  else
                    File.basename(source)

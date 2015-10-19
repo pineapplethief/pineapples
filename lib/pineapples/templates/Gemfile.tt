@@ -50,14 +50,14 @@ gem 'momentjs-rails'
 gem 'uglifier', '>= 1.3.0'
 
 group :production do
-  <% if heroku? -%>
-    gem 'heroku-deflater'
-    gem 'puma'
-    gem 'rack-timeout'
-    gem 'rails_12factor'
-  <% else -%>
-    gem 'puma'
-  <% end -%>
+<% if heroku? -%>
+  gem 'heroku-deflater'
+  gem 'puma'
+  gem 'rack-timeout'
+  gem 'rails_12factor'
+<% else -%>
+  gem 'puma'
+<% end -%>
 end
 
 group :development do

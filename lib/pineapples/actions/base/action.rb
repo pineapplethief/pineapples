@@ -37,6 +37,11 @@ module Pineapples
         raise NotImplementedError, "You should really implement invoke! method on Action subclasses"
       end
 
+      def skip?
+        @skip = false if @skip.nil?
+        @skip
+      end
+
       protected
 
       def pretend?

@@ -35,6 +35,8 @@ Rails app generator based on Suspenders by Thoughtbot and Raygun by Carbon Five 
   spec.add_dependency 'colorize', '~> 0'
   spec.add_dependency 'inquirer', '~> 0.2'
   spec.add_dependency 'highline', '~> 1.7'
+  spec.add_dependency 'html2haml', '~> 2.0'
+  spec.add_dependency 'haml2slim', '~> 0.2'
 
   spec.add_development_dependency 'rspec', '~> 3.2'
   spec.add_development_dependency 'fuubar', '~> 2.0'

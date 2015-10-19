@@ -63,7 +63,7 @@ module Pineapples
       def initialize(generator, target, new_content, options)
         super(generator, target, {verbose: true}.merge(options))
 
-        @behaviour = @config.key?(:after) ? :after : :before
+        @behaviour = @options.key?(:after) ? :after : :before
         @flag = @options.delete(@behaviour)
 
         @new_content = new_content.is_a?(Proc) ? new_content.call : new_content
@@ -118,10 +118,10 @@ module Pineapples
 
       def replace!(regexp, string, force)
         if execute?
-          content = File.binread(target)
+          content = File.binread(target.fullpath)
           if force || !content.include?(new_content)
             content.gsub!(regexp, string)
-            File.open(target, 'wb') { |file| file.write(content) }
+            File.open(target.fullpath, 'wb') { |file| file.write(content) }
           end
         end
       end

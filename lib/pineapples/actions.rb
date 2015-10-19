@@ -1,17 +1,27 @@
 require 'fileutils'
 require 'pathname'
 require 'uri'
-require 'pineapples/actions/action'
+require 'pineapples/actions/base/action'
+require 'pineapples/actions/base/target'
 require 'pineapples/actions/apply'
 require 'pineapples/actions/chmod'
 require 'pineapples/actions/copy_file'
 require 'pineapples/actions/create_file'
+require 'pineapples/actions/directory'
 require 'pineapples/actions/empty_directory'
 require 'pineapples/actions/get'
+require 'pineapples/actions/git'
+require 'pineapples/actions/gsub_file'
 require 'pineapples/actions/insert_into_file'
 require 'pineapples/actions/inside'
+require 'pineapples/actions/keep_file'
+require 'pineapples/actions/prepend_to_class'
+require 'pineapples/actions/remove_file'
+require 'pineapples/actions/ruby'
 require 'pineapples/actions/shell'
 require 'pineapples/actions/template'
+
+require 'pineapples/actions/rails/rails'
 
 module Pineapples
   module Actions
@@ -56,13 +66,13 @@ module Pineapples
     def relative_to_app_root(dir)
       @app_root_pathname ||= Pathname.new(app_root)
       path = Pathname.new(dir)
-      path.relative_path_from(@app_root_pathname)
+      path.relative_path_from(@app_root_pathname).to_s
     end
 
     def relative_to_current_app_dir(dir)
       current_app_path = Pathname.new(current_app_dir)
       path = Pathname.new(dir)
-      path.relative_path_from(current_app_path)
+      path.relative_path_from(current_app_path).to_s
     end
 
     def find_in_source_paths(file)

@@ -31,9 +31,11 @@ module Pineapples
 
       question_string = "Overwrite #{target}?"
       options = ['Yes', 'No', 'Always', 'Quit']
+      colors = [:light_green, :light_red, :light_yellow, :light_red]
+      options_with_color = options.map.with_index { |option, index| option.send(colors[index])}
 
       loop do
-        answer_index = Ask.list(question_string, options_with_color, inquirer_options)
+        answer_index = Ask.list(question_string, options_with_color, {clear: false, response: false})
         answer = options[answer_index]
 
         case answer
@@ -64,7 +66,7 @@ module Pineapples
       end
 
       def identical?
-        exists? && File.binread(target) == render
+        exists? && File.binread(target.fullpath) == render
       end
 
       def render
@@ -73,13 +75,11 @@ module Pineapples
 
       def invoke!
         invoke_with_conflict_check do
-          FileUtils.mkdir_p(File.dirname(target))
-          File.open(target, 'wb') { |file| file.write render }
+          FileUtils.mkdir_p(File.dirname(target.fullpath))
+          File.open(target.fullpath, 'wb') { |file| file.write render }
         end
-        given_target
+        target.given
       end
-
-
 
       protected
 

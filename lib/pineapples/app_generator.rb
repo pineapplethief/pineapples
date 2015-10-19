@@ -1,5 +1,4 @@
 require 'pineapples/actions'
-require 'pineapples/actions/rails/rails'
 require 'pineapples/helpers'
 require 'pineapples/settings'
 
@@ -53,7 +52,7 @@ module Pineapples
       # ask_user_settings
 
       create_root_files
-      #create_app_files
+      create_app_files
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)

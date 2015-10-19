@@ -15,9 +15,7 @@ module Pineapples
     end
 
     class EmptyDirectory < Action
-      attr_reader :given_target,
-                  :target,
-                  :relative_target
+      attr_reader :target,
                   :skip
 
       status_color :create, :creative
@@ -26,62 +24,28 @@ module Pineapples
 
       def initialize(generator, target, options = {})
         super(generator, options)
-        @skip = false
 
-        self.target = target
+        @target = Target.new(target, self)
+        @skip = @target.skip?
       end
 
       def invoke!
         invoke_with_conflict_check do
-          ::FileUtils.mkdir_p(target)
+          ::FileUtils.mkdir_p(target.fullpath)
         end
       end
 
       def revoke!
         say_status :remove
-        ::FileUtils.rm_rf(target) if execute? && exists?
+        ::FileUtils.rm_rf(target.fullpath) if execute? && exists?
         given_target
       end
 
       def exists?
-        ::File.exist?(target)
-      end
-
-      def skip?
-        @skip
+        ::File.exist?(target.fullpath)
       end
 
       protected
-
-      def target=(target)
-        if target
-          @given_target = evaluate_filename(target.to_s)
-          @target = ::File.expand_path(@given_target, generator.current_app_dir)
-          @relative_target = generator.relative_to_current_app_dir(@target)
-        end
-      end
-
-      def evaluate_filename(filename)
-        guard_match = /!(.*?)!/.match(filename)
-        if guard_match
-          guard_method = guard_match[1].strip
-          if generator.respond_to?(guard_method, true)
-            should_skip = generator.send(guard_method)
-            @skip = true if should_skip
-            filename.gsub!(guard_match[0])
-          else
-            raise Error, "No instance method #{guard_method} on generator instance, can't evaluate filename"
-          end
-        end
-
-        match = /%(.*?)%/.match(filename)
-        if match
-          method = match[1].strip
-          generator.respond_to?(method, true) ? generator.send(method) : filename
-        else
-          filename
-        end
-      end
 
       def invoke_with_conflict_check(&block)
         if exists?
@@ -91,7 +55,7 @@ module Pineapples
           block.call if execute?
         end
 
-        target
+        target.fullpath
       end
 
       def on_conflict_behaviour(&block)
@@ -99,7 +63,7 @@ module Pineapples
       end
 
       def message
-        relative_target
+        target.relative
       end
 
     end

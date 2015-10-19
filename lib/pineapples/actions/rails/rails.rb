@@ -1,3 +1,5 @@
+require_relative 'views_converters'
+
 module Pineapples
   module Actions
     module Rails
@@ -6,22 +8,6 @@ module Pineapples
         super
         @after_bundle_callbacks = []
       end
-
-      # Run a command in git.
-      #
-      #   git :init
-      #   git add: "this.file that.rb"
-      #   git add: "onefile.rb", rm: "badfile.cxx"
-      def git(commands = {})
-        if commands.is_a?(Symbol)
-          shell "git #{commands}"
-        else
-          commands.each do |cmd, options|
-            shell "git #{cmd} #{options}"
-          end
-        end
-      end
-
       # Adds a line inside the Application class for <tt>config/application.rb</tt>.
       #
       # If options <tt>:env</tt> is specified, the line is appended to the corresponding
@@ -41,10 +27,12 @@ module Pineapples
 
         in_root do
           if options[:env].nil?
-            insert_into_file 'config/application.rb', "\n    #{content}", after: sentinel, verbose: false
+            insert_into_file 'config/application.rb', "\n    #{content}",
+                              after: sentinel, verbose: false
           else
             Array(options[:env]).each do |env|
-              insert_into_file "config/environments/#{env}.rb", "\n  #{content}", after: env_file_sentinel, verbose: false
+              insert_into_file "config/environments/#{env}.rb", "\n  #{content}",
+                                after: env_file_sentinel, verbose: false
             end
           end
         end
@@ -95,6 +83,8 @@ module Pineapples
       #   rakefile('seed.rake', 'puts "Planting seeds"')
       def rakefile(filename, content = nil, &block)
         say_status :lib, filename, color_from_behaviour
+        rake_extention = File.extname(filename) == '.rake'
+        filename = rake_extention ? filename : "#{filename}.rake"
         create_file("lib/tasks/#{filename}", content, verbose: false, &block)
       end
 
@@ -123,9 +113,9 @@ module Pineapples
       #   generate(:authenticated, "user session")
       def generate(what, *args)
         say_status :generate, what, color_from_behaviour
-        argument = args.flat_map(&:to_s).join(' ')
+        arguments = args.flat_map(&:to_s).join(' ')
 
-        in_root { run_ruby_script("bin/rails generate #{what} #{argument}", verbose: false) }
+        in_root { ruby("bin/rails generate #{what} #{arguments}", verbose: false) }
       end
 
       # Runs the supplied rake task
@@ -137,7 +127,7 @@ module Pineapples
         say_status :rake, command, color_from_behaviour
         env  = options[:env] || ENV['RAILS_ENV'] || 'development'
         sudo = options[:sudo] && RbConfig::CONFIG['host_os'] !~ /mswin|mingw/ ? 'sudo ' : ''
-        in_root { run("#{sudo}#{extify(:rake)} #{command} RAILS_ENV=#{env}", verbose: false) }
+        in_root { shell("#{sudo}rake #{command} RAILS_ENV=#{env}", verbose: false) }
       end
 
       # Make an entry in Rails routing file <tt>config/routes.rb</tt>
@@ -148,7 +138,7 @@ module Pineapples
         sentinel = /\.routes\.draw do\s*\n/m
 
         in_root do
-          inject_into_file 'config/routes.rb', "  #{routing_code}\n", {after: sentinel, verbose: false, force: true}
+          insert_into_file 'config/routes.rb', "  #{routing_code}\n", {after: sentinel, verbose: false, force: true}
         end
       end
 
