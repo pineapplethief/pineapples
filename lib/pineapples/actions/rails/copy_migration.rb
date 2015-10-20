@@ -18,7 +18,6 @@ module Pineapples
           set_source_for_migration!
           @target = target_for_migration
 
-          # TODO: set source and target properly
           super(generator, @source, @target, options)
         end
 
