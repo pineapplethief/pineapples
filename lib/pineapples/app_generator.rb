@@ -53,6 +53,10 @@ module Pineapples
 
       create_root_files
       create_app_files
+      create_bin_files
+      create_config_files
+      create_db_files
+      create_lib_files
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
@@ -87,18 +91,32 @@ module Pineapples
     end
 
     def create_bin_files
+      directory 'bin'
     end
 
     def create_config_files
+      directory 'config'
     end
 
     def create_db_files
+      empty_directory 'db/migrate'
+      copy_migration 'enable_postgres_extensions'
+      copy_migration 'create_data_migrations'
+      if devise?
+        copy_migration 'devise_create_users'
+        copy migration 'add_role_field_to_users' if user_role_field?
+      end
+    end
 
+    def create_lib_files
+      directory 'lib'
     end
 
     def run_after_bundle_callbacks
       @after_bundle_callbacks.each(&:call)
     end
+
+
 
     def debug?
       @debug

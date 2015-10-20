@@ -1,4 +1,5 @@
 require_relative 'erb_converters'
+require_relative 'copy_migration'
 
 module Pineapples
   module Actions
@@ -168,6 +169,20 @@ module Pineapples
         else
           "'#{value}'"
         end
+      end
+
+      def comment_if(setting = nil)
+        return yield ? '# ' : '' if block_given?
+
+        raise ArgumentError, 'You should provide either setting key or block' if setting.nil?
+        settings[setting].value ? '# ' : ''
+      end
+
+      def comment_if_not(setting = nil)
+        return yield ? '' : '# ' if block_given?
+
+        raise ArgumentError, 'You should provide either setting key or block' if setting.nil?
+        settings[setting].value ? '' : '# '
       end
 
     end
