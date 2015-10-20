@@ -29,22 +29,16 @@ Rails.application.configure do
   config.action_view.logger = nil
   config.quiet_assets = false if ENV['LOG_ASSETS']
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    user_name: '39761fffa146761af',
-    password: '33426bd44f45ef',
-    address: 'mailtrap.io',
-    domain: 'mailtrap.io',
-    port: '2525',
-    authentication: :cram_md5
-  }
-
   url = ENV['DOMAIN_URL'] || 'http://localhost:3000'
-  url = URI.parse(url)
 
-  Rails.application.routes.default_url_options = {host: url.host, port: url.port}
+  Rails.application.routes.default_url_options = {url: url}
 
-  config.action_mailer.default_url_options = {host: url.host, port: url.port}
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = SMTP_SETTINGS
+
+  config.action_mailer.default_url_options = {url: url}
+
   config.action_mailer.raise_delivery_errors = true
   # config.action_mailer.delivery_method = :test
 
@@ -66,5 +60,5 @@ Rails.application.configure do
   config.middleware.insert_after(ActionDispatch::Static, Rack::LiveReload, live_reload_options)
 
   # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  config.action_view.raise_on_missing_translations = true
 end

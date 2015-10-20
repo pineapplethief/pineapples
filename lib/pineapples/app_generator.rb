@@ -87,13 +87,16 @@ module Pineapples
     end
 
     def create_bin_files
+      directory 'bin'
     end
 
     def create_config_files
+      directory 'config'
     end
 
     def create_db_files
-
+      empty_directory 'db/migrate'
+      copy_migration 'enable_postgres_extensions'
     end
 
     def run_after_bundle_callbacks
