@@ -4,7 +4,7 @@ module Pineapples
   module Actions
     def empty_directory_with_keep_file(target, options = {})
       empty_directory(target, options)
-      keep_file(destination)
+      keep_file(target)
     end
 
     def keep_file(target)

@@ -13,7 +13,7 @@ module Pineapples
 
         def initialize(generator, migration_name, options)
           @generator = generator
-          @migration_name = migration_name
+          @migration_name = File.basename(migration_name, File.extname(migration_name))
 
           set_source_for_migration!
           @target = target_for_migration
@@ -22,25 +22,27 @@ module Pineapples
         end
 
         def invoke!
-          sleep 0.01
+          sleep 2
           super
         end
 
         private
 
         def set_source_for_migration!
-          Dir.glob("#{migration_dir}/*.rb").each do |filename|
-            @source = filename if filename.include?(migration_name)
+          sources = generator.source_paths_for_search
+
+          sources.each do |source_path|
+            migration_dir = File.join(source_path, relative_migration_dir)
+            Dir.glob("#{migration_dir}/*.rb").each do |filename|
+              @source = filename if filename.include?(migration_name)
+            end
           end
+
           raise ArgumentError, "Failed to find migration by name #{migration_name}" if @source.nil?
         end
 
         def target_for_migration
-          "#{migration_timestamp}_#{migration_name}.rb"
-        end
-
-        def migration_dir
-          File.join(generator.templates_root, relative_migration_dir)
+          File.join(relative_migration_dir, "#{migration_timestamp}_#{migration_name}.rb")
         end
 
         def relative_migration_dir

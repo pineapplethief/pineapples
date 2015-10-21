@@ -20,6 +20,9 @@ module Pineapples
     setting :devise, type: :boolean, default: true,
             prompt: 'Wanna use Devise for authentication?'
 
+    setting :ajax_login, type: :boolean, default: false,
+            prompt: 'Wanna login via ajax using devise?'
+
     setting :pundit, type: :boolean, default: true,
             prompt: 'Wanna use Pundit for authorization?'
 
@@ -104,12 +107,13 @@ module Pineapples
       copy_migration 'create_data_migrations'
       if devise?
         copy_migration 'devise_create_users'
-        copy migration 'add_role_field_to_users' if user_role_field?
+        copy_migration 'add_role_field_to_users' if user_role_field?
       end
     end
 
     def create_lib_files
       directory 'lib'
+      empty_directory_with_keep_file 'lib/assets'
     end
 
     def run_after_bundle_callbacks

@@ -28,7 +28,7 @@ module Pineapples
         generator.define_singleton_method(:boot?) { true }
         target = target('config/!boot!.rb')
 
-        expect(target.skip?).to eq(true)
+        expect(target.skip?).to be true
       end
 
       it 'removes guard clause(!!) from filename given' do
@@ -66,7 +66,7 @@ module Pineapples
     describe '#skip?' do
       it 'returns false if @skip is nil' do
         target = target('config/boot.rb')
-        expect(target.skip?).to eq(false)
+        expect(target.skip?).to be false
       end
     end
   end
