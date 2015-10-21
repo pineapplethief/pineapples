@@ -12,14 +12,13 @@ module Pineapples
     #   chmod "script/server", 0755
     #
     def chmod(path, mode, options = {})
-      return unless behavior == :invoke
+      return unless behaviour == :invoke
 
       verbose = options.fetch(:verbose, verbose?)
       execute = !options.fetch(:pretend, pretend?)
       color   = options.fetch(:color, DEFAULT_COLOR)
 
-      path = File.expand_path(path, destination_root)
-      relative_path = relative_to_app_root(path)
+      relative_path = relative_to_app_root(File.join(app_root, path))
 
       say_status(:chmod, relative_path, color, verbose)
 

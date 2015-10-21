@@ -49,15 +49,16 @@ gem 'sassc-rails'
 gem 'momentjs-rails'
 gem 'uglifier', '>= 1.3.0'
 
-group :production do
 <% if heroku? -%>
+group :production do
   gem 'heroku-deflater'
-  gem 'puma'
   gem 'rack-timeout'
   gem 'rails_12factor'
-<% else -%>
-  gem 'puma'
+end
 <% end -%>
+
+group :production, :development do
+  gem 'puma'
 end
 
 group :development do
@@ -72,6 +73,9 @@ group :development do
 end
 
 group :test do
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'factory_girl_rails'
   gem 'rspec-rails', '~> 3.2'
   gem 'shoulda'
 end

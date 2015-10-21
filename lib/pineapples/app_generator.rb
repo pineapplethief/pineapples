@@ -53,7 +53,6 @@ module Pineapples
       valid_const! && check_target!
       create_app_root
 
-      puts "devise? = #{devise?}"
       # ask_user_settings
 
       create_root_files
@@ -63,7 +62,10 @@ module Pineapples
       create_db_files
       create_lib_files
       create_public_files
+      create_spec_files
+
       create_misc_folders
+
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
@@ -76,6 +78,8 @@ module Pineapples
     end
 
     def create_root_files
+      create_file '.ruby-version', Pineapples::RUBY_VERSION
+      create_file '.ruby-gemset', app_name
       copy_file '.editor-config'
       template '.example.env'
       copy_file '.example.rspec'
@@ -129,11 +133,19 @@ module Pineapples
       directory 'public'
     end
 
+    def create_spec_files
+      # directory 'spec'
+    end
+
     def create_misc_folders
       keep_file 'log'
-      empty_directory 'tmp'
-      keep_file 'vendor/assets/javascripts'
-      keep_file 'vendor/assets/stylesheets'
+
+      empty_directory 'tmp/cache/assets'
+
+      inside 'vendor/assets' do
+        keep_file 'javascripts'
+        keep_file 'stylesheets'
+      end
     end
 
     def run_after_bundle_callbacks

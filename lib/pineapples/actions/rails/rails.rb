@@ -4,11 +4,6 @@ require_relative 'copy_migration'
 module Pineapples
   module Actions
     module Rails
-
-      def initialize(*) # :nodoc:
-        super
-        @after_bundle_callbacks = []
-      end
       # Adds a line inside the Application class for <tt>config/application.rb</tt>.
       #
       # If options <tt>:env</tt> is specified, the line is appended to the corresponding
@@ -150,6 +145,7 @@ module Pineapples
       #     git add: '.'
       #   end
       def after_bundle(&block)
+        @after_bundle_callbacks ||= []
         @after_bundle_callbacks << block
       end
 
