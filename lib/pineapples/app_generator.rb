@@ -62,6 +62,8 @@ module Pineapples
       create_config_files
       create_db_files
       create_lib_files
+      create_public_files
+      create_misc_folders
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
@@ -93,6 +95,11 @@ module Pineapples
 
     def create_app_files
       directory 'app'
+      keep_file  'app/assets/fonts'
+      keep_file  'app/assets/images'
+
+      keep_file  'app/mailers'
+      keep_file  'app/models' if !needs_user_model?
     end
 
     def create_bin_files
@@ -115,7 +122,18 @@ module Pineapples
 
     def create_lib_files
       directory 'lib'
-      empty_directory_with_keep_file 'lib/assets'
+      keep_file 'lib/assets'
+    end
+
+    def create_public_files
+      directory 'public'
+    end
+
+    def create_misc_folders
+      keep_file 'log'
+      empty_directory 'tmp'
+      keep_file 'vendor/assets/javascripts'
+      keep_file 'vendor/assets/stylesheets'
     end
 
     def run_after_bundle_callbacks
