@@ -1,6 +1,7 @@
 module Pineapples
   module Actions
     class Target
+      PASS_MATCH  = /!=(.*?)!/
       GUARD_MATCH = /!(.*?)!/
       EVAL_MATCH  = /%(.*?)%/
 
@@ -15,6 +16,7 @@ module Pineapples
         @action = action
         @given = target.to_s
 
+        evaluate_pass_method!
         evaluate_guard_methods!
         evaluate_filename_method!
 
@@ -33,9 +35,18 @@ module Pineapples
 
       private
 
+      def evaluate_pass_method!
+        if pass_match
+          raise Error, methods_missing_error_message(pass_methods) if !generator_pass_method
+
+          @skip = !generator.send(generator_pass_method)
+          @given.gsub!(pass_match[0], '')
+        end
+      end
+
       def evaluate_guard_methods!
         if guard_match
-          raise Error, guard_methods_missing_error_message if !generator_guard_method
+          raise Error, methods_missing_error_message(guard_methods) if !generator_guard_method
 
           @skip = generator.send(generator_guard_method)
           @given.gsub!(guard_match[0], '')
@@ -44,11 +55,15 @@ module Pineapples
 
       def evaluate_filename_method!
         if eval_match
-          raise Error, filename_method_missing_error_message if !generator_filename_method
+          raise Error, methods_missing_error_message(filename_method) if !generator_filename_method
 
           filename = generator.send(filename_method)
           @given.gsub!(eval_match[0], filename)
         end
+      end
+
+      def pass_match
+        PASS_MATCH.match(@given)
       end
 
       def guard_match
@@ -57,6 +72,19 @@ module Pineapples
 
       def eval_match
         EVAL_MATCH.match(@given)
+      end
+
+      def generator_pass_method
+        if @pass_method.nil?
+          pass_methods.each do |method|
+            if generator.respond_to?(method, true)
+              @pass_method = method
+              break
+            end
+          end
+        end
+        @pass_method = false if @pass_method.nil?
+        @pass_method
       end
 
       def generator_guard_method
@@ -85,16 +113,22 @@ module Pineapples
         [guard_method, predicate_method]
       end
 
+      def pass_methods
+        pass_method = pass_match[1].strip
+        predicate_method = pass_method + '?'
+        [pass_method, predicate_method]
+      end
+
       def filename_method
         eval_match[1].strip
       end
 
-      def guard_methods_missing_error_message
-        "No instance methods #{guard_methods.join(', ')} for AppGenerator, can't evaluate filepath #{given}"
-      end
+      def methods_missing_error_message(methods)
+        plural = methods.is_a?(Array)
+        methods = methods.join(', ') if plural
+        methods_message = plural ? 'methods' : 'method'
 
-      def filename_method_missing_error_message
-        "No instance method #{filename_method} for AppGenerator, can't evaluate filepath #{given}"
+        "No instance #{methods_message} #{methods} for AppGenerator, can't evaluate filepath #{given}"
       end
     end
 

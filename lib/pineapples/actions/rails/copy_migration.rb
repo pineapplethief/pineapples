@@ -11,6 +11,14 @@ module Pineapples
       class CopyMigration < CopyFile
         attr_reader :migration_name
 
+        def self.time
+          @time ||= Time.now
+        end
+
+        def self.time=(value)
+          @time = value
+        end
+
         def initialize(generator, migration_name, options)
           @generator = generator
           @migration_name = File.basename(migration_name, File.extname(migration_name))
@@ -22,8 +30,8 @@ module Pineapples
         end
 
         def invoke!
-          sleep 2
           super
+          self.class.time = self.class.time + 2
         end
 
         private
@@ -50,7 +58,7 @@ module Pineapples
         end
 
         def migration_timestamp
-          Time.now.strftime('%Y%m%d%H%M%S')
+          self.class.time.strftime('%Y%m%d%H%M%S')
         end
       end
 

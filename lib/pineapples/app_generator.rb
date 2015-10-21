@@ -52,6 +52,8 @@ module Pineapples
     def start!
       valid_const! && check_target!
       create_app_root
+
+      puts "devise? = #{devise?}"
       # ask_user_settings
 
       create_root_files
