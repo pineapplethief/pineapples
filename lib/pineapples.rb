@@ -5,12 +5,12 @@ require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/string/inflections'
 
 require 'English'
-#require 'erb'
 require 'fileutils'
 require 'ostruct'
 require 'optparse'
 require 'pathname'
 require 'securerandom'
+require 'shellwords'
 
 require 'pineapples/version'
 require 'pineapples/error'

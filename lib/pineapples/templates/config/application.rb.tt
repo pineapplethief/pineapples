@@ -12,16 +12,16 @@ module <%= app_const_base %>
   class Application < Rails::Application
     require_all "#{Rails.root}/lib/extensions"
     require_all "#{Rails.root}/lib/logging" if !Rails.env.production?
-    <%= comment_if_not :carrierwave %>require_all "#{Rails.root}/lib/carrierwave"
+    <% if carrierwave? -%>require_all "#{Rails.root}/lib/carrierwave"<% end %>
     require_all "#{Rails.root}/lib/virtus"
-    <%= comment_if_not :devise %>require_all "#{Rails.root}/lib/devise"
+    <% if devise? -%>require_all "#{Rails.root}/lib/devise"<% end %>
     require_all "#{Rails.root}/lib/simple_form"
     require     "#{Rails.root}/config/smtp"
 
     config.generators do |generate|
       generate.scaffold_controller :responders_controller
       generate.helper false
-      generate.template_engine <%= template_engine %>
+      generate.template_engine :<%= template_engine %>
       generate.javascript_engine false
       generate.stylesheets false
 

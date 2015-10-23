@@ -35,6 +35,15 @@ module Pineapples
     setting :bootstrap, type: :boolean, default: false,
             prompt: 'Wanna use Bootstrap on this project?'
 
+    setting :git_repo_url, type: :string, default: '',
+            prompt: 'What is the git remote URL for this project?'
+
+    setting :production_hostname, type: :string, default: '',
+            prompt: 'Enter hostname for production site'
+
+    setting :staging_hostname, type: :string, default: '',
+            prompt: 'Enter hostname for staging site'
+
     attr_accessor :app_name,
                   :app_root,
                   :settings
@@ -65,6 +74,22 @@ module Pineapples
       create_spec_files
 
       create_misc_folders
+
+      git :init if !preexisting_git_repo?
+
+      shell_with_clean_bundler_env 'bin/setup'
+
+      bundle exec: 'spring binstub --all'
+
+      if !preexisting_git_repo?
+        git add: '-A .'
+        git commit: "-n -m 'Set up project'"
+        git checkout: '-b development'
+        if git_repo_url.present?
+          git remote: "add origin #{git_repo_url.shellescape}"
+          git push: '-u origin --all'
+        end
+      end
 
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
@@ -99,15 +124,16 @@ module Pineapples
 
     def create_app_files
       directory 'app'
-      keep_file  'app/assets/fonts'
-      keep_file  'app/assets/images'
+      empty_directory_with_keep_file  'app/assets/fonts'
+      empty_directory_with_keep_file  'app/assets/images'
 
-      keep_file  'app/mailers'
-      keep_file  'app/models' if !needs_user_model?
+      empty_directory_with_keep_file  'app/mailers'
+      empty_directory_with_keep_file  'app/models' if !needs_user_model?
     end
 
     def create_bin_files
       directory 'bin'
+      chmod 'bin/setup', '+x'
     end
 
     def create_config_files
@@ -143,8 +169,8 @@ module Pineapples
       empty_directory 'tmp/cache/assets'
 
       inside 'vendor/assets' do
-        keep_file 'javascripts'
-        keep_file 'stylesheets'
+        empty_directory_with_keep_file 'javascripts'
+        empty_directory_with_keep_file 'stylesheets'
       end
     end
 

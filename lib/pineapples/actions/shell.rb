@@ -36,5 +36,12 @@ module Pineapples
       end
     end
 
+    def shell_with_clean_bundler_env(command, options = {})
+      return shell(command, options) if !defined?(Bundler)
+      Bundler.with_clean_env do
+        shell(command, options)
+      end
+    end
+
   end
 end

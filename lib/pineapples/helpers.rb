@@ -30,5 +30,10 @@ module Pineapples
       SecureRandom.hex(64)
     end
 
+    def preexisting_git_repo?
+      @preexisting_git_repo = File.exist?('.git') if @preexisting_git_repo.nil?
+      @preexisting_git_repo
+    end
+
   end
 end
