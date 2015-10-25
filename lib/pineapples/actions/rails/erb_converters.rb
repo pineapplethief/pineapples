@@ -7,7 +7,7 @@ module Pineapples
         execute = !options.fetch(:pretend, pretend?)
 
         description = 'Convert ERB views to HAML'
-        say_action(:erb2haml, description, verbose)
+        say_status(:erb2haml, description, verbose)
 
         if execute
           target_path = File.expand_path(target, app_root)
@@ -23,7 +23,7 @@ module Pineapples
         execute = !options.fetch(:pretend, pretend?)
 
         description = 'Convert ERB views to SLIM'
-        say_action(:erb2slim, description, verbose)
+        say_status(:erb2slim, description, verbose)
 
         if execute
           erb2haml(target, options)

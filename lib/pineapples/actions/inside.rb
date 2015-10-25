@@ -50,7 +50,7 @@ module Pineapples
       inside(:root, options) { yield }
     end
 
-    def in_app_root
+    def in_app_root(&block)
       Dir.chdir(app_root, &block)
     end
 

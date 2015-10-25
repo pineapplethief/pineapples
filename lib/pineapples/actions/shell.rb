@@ -14,7 +14,7 @@ module Pineapples
     #   end
     #
     def shell(command, options = {})
-      return if behavior == :revoke
+      return if behaviour == :revoke
 
       verbose = options.fetch(:verbose, verbose?)
       execute = !options.fetch(:pretend, pretend?)
@@ -28,10 +28,10 @@ module Pineapples
         command = "#{executable} #{command}"
       end
 
-      say_action(:shell, description, verbose)
+      say_status(:shell, description, verbose)
 
       if execute
-        config[:capture] ? `#{command}` : system("#{command}")
+        in_app_root { options[:capture] ? `#{command}` : system("#{command}") }
         raise Error, "#{command} failed with status #{$CHILD_STATUS.exitstatus}." if not $CHILD_STATUS.success?
       end
     end
