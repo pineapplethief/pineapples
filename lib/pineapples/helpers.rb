@@ -31,7 +31,10 @@ module Pineapples
     end
 
     def preexisting_git_repo?
-      @preexisting_git_repo = File.exist?('.git') if @preexisting_git_repo.nil?
+      if @preexisting_git_repo.nil?
+        git_path = File.expand_path('.git', app_root)
+        @preexisting_git_repo = File.exist?(git_path)
+      end
       @preexisting_git_repo
     end
 

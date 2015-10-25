@@ -79,17 +79,19 @@ module Pineapples
 
       shell_with_clean_bundler_env 'bin/setup'
 
-      bundle exec: 'spring binstub --all'
+      # bundle exec: 'spring binstub --all'
 
-      if !preexisting_git_repo?
-        git add: '-A .'
-        git commit: "-n -m 'Set up project'"
-        git checkout: '-b development'
-        if git_repo_url.present?
-          git remote: "add origin #{git_repo_url.shellescape}"
-          git push: '-u origin --all'
-        end
-      end
+      # if !preexisting_git_repo?
+      #   git add: '-A .'
+      #   git commit: "-n -m 'Generated project via pineapples gem'"
+      #   git checkout: '-b development'
+      #   if git_repo_url.present?
+      #     git remote: "add origin #{git_repo_url.shellescape}"
+      #     git push: '-u origin --all'
+      #   end
+      # end
+
+
 
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error

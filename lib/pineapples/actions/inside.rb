@@ -50,9 +50,13 @@ module Pineapples
       inside(:root, options) { yield }
     end
 
+    def in_app_root
+      Dir.chdir(app_root, &block)
+    end
+
     private
 
-    # helper method to abstract directory stack management in the "inside" action
+    # helper method to abstract directory stack management in the #inside action
     def with_directory(dir)
       not_in_root = (dir != :root)
 

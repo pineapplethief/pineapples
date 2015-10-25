@@ -39,7 +39,7 @@ module Pineapples
         super
         if options[:mode] == :preserve
           mode = File.stat(source).mode
-          generator.chmod(target, mode, options)
+          generator.chmod(target.fullpath, mode, options)
         end
       end
 
