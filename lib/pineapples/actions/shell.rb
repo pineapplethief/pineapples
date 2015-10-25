@@ -31,7 +31,7 @@ module Pineapples
       say_status(:shell, description, verbose)
 
       if execute
-        in_app_root { options[:capture] ? `#{command}` : system("#{command}") }
+        options[:capture] ? `#{command}` : system("#{command}")
         raise Error, "#{command} failed with status #{$CHILD_STATUS.exitstatus}." if not $CHILD_STATUS.success?
       end
     end

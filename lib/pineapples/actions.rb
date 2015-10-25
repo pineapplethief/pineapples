@@ -115,6 +115,11 @@ module Pineapples
       say(output)
     end
 
+    def say_title(title)
+      puts
+      puts "== #{title} ==".light_yellow
+    end
+
     def indent(verbose = true, level_increment = 1)
       $terminal.indent_level += level_increment if verbose
       yield

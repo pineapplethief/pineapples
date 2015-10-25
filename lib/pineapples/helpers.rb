@@ -1,3 +1,4 @@
+require ''
 module Pineapples
   module Helpers
     RESERVED_NAMES = %w[application destroy plugin runner test]
@@ -7,6 +8,10 @@ module Pineapples
     end
 
     protected
+
+    def humanized_application_name
+      app_name.underscore.humanize.gsub(/\S+/, &:capitalize)
+    end
 
     def app_const_base
       @app_const_base ||= app_name.gsub(/\W/, '_').squeeze('_').camelize
@@ -36,6 +41,16 @@ module Pineapples
         @preexisting_git_repo = File.exist?(git_path)
       end
       @preexisting_git_repo
+    end
+
+    def rbenv_installed?
+      @rbenv_installed = `which rbenv`.length > 0 if @rbenv_installed.nil?
+      @rbenv_installed
+    end
+
+    def rvm_installed?
+      @rvm_installed = `rvm -v`.length > 0 if @rvm_installed.nil?
+      @rvm_installed
     end
 
   end

@@ -75,9 +75,29 @@ module Pineapples
 
       create_misc_folders
 
-      git :init if !preexisting_git_repo?
+      in_app_root do
+        git :init if !preexisting_git_repo?
 
-      shell_with_clean_bundler_env 'bin/setup'
+        say_title 'Installing Dependencies'
+        shell 'gem install bundler --no-document --conservative'
+
+        shell 'rbenv rehash' if rbenv_installed?
+        shell 'bundle install'
+        shell 'rbenv rehash' if rbenv_installed?
+
+        say_title 'Copying sample files'
+        copy_file '.example.env', '.env'
+        copy_file '.example.rspec', '.rspec'
+
+
+
+        # shell 'bin/rails generate devise:install'
+        # bundle exec: 'bin/rails generate devise:install'
+
+        # say_title 'Preparing database'
+        # shell 'rake db:setup'
+
+      end
 
       # bundle exec: 'spring binstub --all'
 
@@ -90,8 +110,6 @@ module Pineapples
       #     git push: '-u origin --all'
       #   end
       # end
-
-
 
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error

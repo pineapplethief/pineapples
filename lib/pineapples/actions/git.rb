@@ -6,12 +6,10 @@ module Pineapples
     #   git add: "this.file that.rb"
     #   git add: "onefile.rb", rm: "badfile.cxx"
     def git(commands = {})
-      in_root do
-        if commands.is_a?(Symbol)
-          shell "git #{commands}"
-        else
-          commands.each { |cmd, options| shell "git #{cmd} #{options}" }
-        end
+      if commands.is_a?(Symbol)
+        shell "git #{commands}"
+      else
+        commands.each { |cmd, options| shell "git #{cmd} #{options}" }
       end
     end
 

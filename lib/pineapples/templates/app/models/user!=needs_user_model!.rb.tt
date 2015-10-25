@@ -1,4 +1,10 @@
 class User < ActiveRecord::Base
+<% if devise? -%>
+  devise :database_authenticatable, :registerable, :recoverable,
+         :rememberable, :trackable, :validatable, :confirmable
+         # :omniauthable, omniauth_providers: [:facebook]
+         # :lockable, :timeoutable
+<% end -%>
 <% if user_role_field? -%>
   as_enum :role, [:guest, :regular, :trusted, :moderator, :admin],
           source: :role, map: :string, accessor: :whiny
