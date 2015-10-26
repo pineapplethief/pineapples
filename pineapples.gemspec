@@ -28,9 +28,7 @@ Rails app generator based on Suspenders by Thoughtbot and Raygun by Carbon Five 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 
-
-
-  spec.add_dependency 'rails', Pineapples::RAILS_VERSION
+  spec.add_dependency 'activesupport', '~> 4.2'
   spec.add_dependency 'bundler', '~> 1.10'
   spec.add_dependency 'colorize', '~> 0'
   spec.add_dependency 'inquirer', '~> 0.2'

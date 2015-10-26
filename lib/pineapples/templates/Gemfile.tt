@@ -24,6 +24,7 @@ gem 'hiredis'
 gem 'pry-byebug'
 gem 'pry-rails'
 gem 'rack-cache'
+gem 'rack-canonical-host'
 gem 'redis', require: ['redis', 'redis/connection/hiredis']
 gem 'redis-rails'
 gem 'require_all'

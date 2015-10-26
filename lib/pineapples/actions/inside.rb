@@ -51,12 +51,11 @@ module Pineapples
     end
 
     def in_app_root(&block)
-      current_working_directory = Dir.pwd
-      shell "cd #{app_root}"
-      yield
-      shell "cd #{current_working_directory}"
-
-      # Dir.chdir(app_root, &block)
+      # current_working_directory = Dir.pwd
+      # shell "cd #{app_root}"
+      # yield
+      # shell "cd #{current_working_directory}"
+      Bundler.with_clean_env { Dir.chdir(app_root, &block) }
     end
 
     private

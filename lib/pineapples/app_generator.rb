@@ -76,37 +76,21 @@ module Pineapples
       create_misc_folders
 
       in_app_root do
-        git :init if !preexisting_git_repo?
-
         say_title 'Installing Dependencies'
-        shell 'gem install bundler --no-document --conservative'
-
-        shell 'rbenv rehash' if rbenv_installed?
-
-        with_rvm_gemset(app_name) { bundle :install }
-
-        shell 'rbenv rehash' if rbenv_installed?
+        shell 'bundle install'
 
         say_title 'Copying sample files'
         copy_file '.example.env', '.env'
         copy_file '.example.rspec', '.rspec'
 
+        # say_title 'Setting up git repo'
+        # setup_git
+
         # say_title 'Preparing database'
         # shell 'rake db:setup'
-
       end
 
       # bundle exec: 'spring binstub --all'
-
-      # if !preexisting_git_repo?
-      #   git add: '-A .'
-      #   git commit: "-n -m 'Generated project via pineapples gem'"
-      #   git checkout: '-b development'
-      #   if git_repo_url.present?
-      #     git remote: "add origin #{git_repo_url.shellescape}"
-      #     git push: '-u origin --all'
-      #   end
-      # end
 
       #run_after_bundle_callbacks
     rescue Pineapples::Error => error
@@ -188,6 +172,19 @@ module Pineapples
       inside 'vendor/assets' do
         empty_directory_with_keep_file 'javascripts'
         empty_directory_with_keep_file 'stylesheets'
+      end
+    end
+
+    def setup_git
+      if !preexisting_git_repo?
+        git :init
+        git add: '-A .'
+        git commit: '-n -m "Generated project via pineapples gem"'
+        git checkout: '-b development'
+        if git_repo_url.present?
+          git remote: "add origin #{git_repo_url.shellescape}"
+          git push: '-u origin --all'
+        end
       end
     end
 

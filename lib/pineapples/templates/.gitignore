@@ -8,6 +8,8 @@
 /.env
 /.foreman
 
+/config/nginx.conf
+
 /coverage/*
 
 /log

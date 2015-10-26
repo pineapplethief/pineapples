@@ -19,16 +19,11 @@ module Pineapples
       verbose = options.fetch(:verbose, verbose?)
       execute = !options.fetch(:pretend, pretend?)
 
-      description = "#{command} from #{current_app_dir.inspect}"
-
       executable = options[:with].to_s
 
-      if executable.present?
-        description = "#{File.basename(executable)} #{desc}"
-        command = "#{executable} #{command}"
-      end
+      command = "#{executable} #{command}" if executable.present?
 
-      say_status(:shell, description, verbose)
+      say_status(:shell, command, DEFAULT_COLOR, verbose)
 
       if execute
         options[:capture] ? `#{command}` : system("#{command}")
