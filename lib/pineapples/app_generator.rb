@@ -82,17 +82,14 @@ module Pineapples
         shell 'gem install bundler --no-document --conservative'
 
         shell 'rbenv rehash' if rbenv_installed?
-        shell 'bundle install'
+
+        with_rvm_gemset(app_name) { bundle :install }
+
         shell 'rbenv rehash' if rbenv_installed?
 
         say_title 'Copying sample files'
         copy_file '.example.env', '.env'
         copy_file '.example.rspec', '.rspec'
-
-
-
-        # shell 'bin/rails generate devise:install'
-        # bundle exec: 'bin/rails generate devise:install'
 
         # say_title 'Preparing database'
         # shell 'rake db:setup'

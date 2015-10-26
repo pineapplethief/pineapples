@@ -12,5 +12,16 @@ module Pineapples
         print output if !options[:quiet]
       end
     end
+
+    def with_rvm_gemset(name)
+      yield and return if !rvm_installed?
+
+      current = `rvm gemset name`
+      puts "Switching to gemset #{name}"
+      shell "rvm use #{name}"
+      yield
+      puts "Switching back to #{current}"
+      shell "rvm use #{current}"
+    end
   end
 end

@@ -1,4 +1,3 @@
-require ''
 module Pineapples
   module Helpers
     RESERVED_NAMES = %w[application destroy plugin runner test]
