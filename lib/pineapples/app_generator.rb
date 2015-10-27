@@ -11,8 +11,8 @@ module Pineapples
 
     TEMPLATING_ENGINES = [:erb, :haml, :slim]
 
-    setting :heroku, type: :boolean, default: false,
-            prompt: 'Wanna use Heroku?'
+    setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
+            prompt: 'Select templating engine to be used in the app'
 
     setting :carrierwave, type: :boolean, default: false,
             prompt: 'Wanna use Carrierwave for file uploads?'
@@ -29,11 +29,14 @@ module Pineapples
     setting :user_role_field, type: :boolean, default: true,
             prompt: 'Wanna add role attribute to users model as simple user roles solution?'
 
-    setting :template_engine, type: :symbol, default: :erb, options: TEMPLATING_ENGINES,
-            prompt: 'Select templating engine to be used in the app'
-
     setting :bootstrap, type: :boolean, default: false,
             prompt: 'Wanna use Bootstrap on this project?'
+
+    setting :use_rvm, type: :boolean, default: true,
+            prompt: 'Want to create new RVM gemset for the app?'
+
+    setting :heroku, type: :boolean, default: false,
+            prompt: 'Wanna use Heroku?'
 
     setting :git_repo_url, type: :string, default: '',
             prompt: 'What is the git remote URL for this project?'
@@ -75,24 +78,7 @@ module Pineapples
 
       create_misc_folders
 
-      in_app_root do
-        say_title 'Installing Dependencies'
-        shell 'bundle install'
-
-        say_title 'Copying sample files'
-        copy_file '.example.env', '.env'
-        copy_file '.example.rspec', '.rspec'
-
-        # say_title 'Setting up git repo'
-        # setup_git
-
-        # say_title 'Preparing database'
-        # shell 'rake db:setup'
-      end
-
-      # bundle exec: 'spring binstub --all'
-
-      #run_after_bundle_callbacks
+      setup_generated_app
     rescue Pineapples::Error => error
       (debug? || ENV['PINEAPPLES_DEBUG'] == '1') ? (raise error) : say(error.message.light_red)
       exit 1
@@ -178,8 +164,56 @@ module Pineapples
       end
     end
 
+    def setup_generated_app
+      in_app_root do
+        create_rvm_gemset if use_rvm?
+        # say_title 'Installing Dependencies'
+        # puts "rvm gemset = #{shell 'rvm gemset name'}"
+        # shell_with_clean_bundler_env 'bundle install'
+
+        say_title 'Copying sample files'
+        copy_file '.example.env', '.env'
+        copy_file '.example.rspec', '.rspec'
+
+        # setup_git
+
+        # say_title 'Preparing database'
+        # shell 'rake db:setup'
+      end
+
+      # bundle exec: 'spring binstub --all'
+
+      #run_after_bundle_callbacks
+    end
+
+    def create_rvm_gemset
+      if shell 'rvm'
+        say_title 'Creating project-specific RVM gemset'
+        # using the rvm Ruby API, see:
+        # http://blog.thefrontiergroup.com.au/2010/12/a-brief-introduction-to-the-rvm-ruby-api/
+        if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
+          gems_path = ENV['MY_RUBY_HOME'].split(/@/)[0].sub(/rubies/,'gems')
+          ENV['GEM_PATH'] = "#{gems_path}:#{gems_path}@global"
+          require 'rvm'
+
+          puts "File.dirname(__dir__) = #{File.dirname(__dir__)}"
+          RVM.use_from_path! File.dirname(__dir__)
+          puts "creating RVM gemset '#{app_name}'"
+          RVM.gemset_create app_name
+          begin
+            puts "switching to gemset '#{app_name}'"
+            RVM.gemset_use! app_name
+          rescue => error
+            say "rvm failure: unable to use gemset #{app_name}, error: #{error}"
+            raise
+          end
+        end
+      end
+    end
+
     def setup_git
       if !preexisting_git_repo?
+        say_title 'Setting up git repo'
         git :init
         git add: '-A .'
         git commit: '-n -m "Generated project via pineapples gem"'
