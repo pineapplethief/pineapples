@@ -18,11 +18,12 @@ module Pineapples
       execute = !options.fetch(:pretend, pretend?)
       color   = options.fetch(:color, DEFAULT_COLOR)
 
-      relative_path = relative_to_app_root(File.join(app_root, path))
+      full_path = File.join(app_root, path)
+      relative_path = relative_to_app_root(full_path)
 
       say_status(:chmod, relative_path, color, verbose)
 
-      FileUtils.chmod_R(mode, path) if execute
+      FileUtils.chmod_R(mode, full_path) if execute
     end
   end
 end

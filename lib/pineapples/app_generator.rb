@@ -165,11 +165,11 @@ module Pineapples
     end
 
     def setup_generated_app
+      create_rvm_gemset if use_rvm?
       in_app_root do
-        create_rvm_gemset if use_rvm?
         # say_title 'Installing Dependencies'
-        # puts "rvm gemset = #{shell 'rvm gemset name'}"
-        # shell_with_clean_bundler_env 'bundle install'
+        puts "rvm gemset = #{shell 'rvm gemset name'}"
+        shell_with_clean_bundler_env 'bundle install'
 
         say_title 'Copying sample files'
         copy_file '.example.env', '.env'
@@ -187,22 +187,21 @@ module Pineapples
     end
 
     def create_rvm_gemset
-      if shell 'rvm'
+      if rvm_installed?
         say_title 'Creating project-specific RVM gemset'
         # using the rvm Ruby API, see:
         # http://blog.thefrontiergroup.com.au/2010/12/a-brief-introduction-to-the-rvm-ruby-api/
         if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
           gems_path = ENV['MY_RUBY_HOME'].split(/@/)[0].sub(/rubies/,'gems')
           ENV['GEM_PATH'] = "#{gems_path}:#{gems_path}@global"
-          require 'rvm'
 
-          puts "File.dirname(__dir__) = #{File.dirname(__dir__)}"
           RVM.use_from_path! File.dirname(__dir__)
           puts "creating RVM gemset '#{app_name}'"
           RVM.gemset_create app_name
           begin
             puts "switching to gemset '#{app_name}'"
             RVM.gemset_use! app_name
+            # RVM.gemset
           rescue => error
             say "rvm failure: unable to use gemset #{app_name}, error: #{error}"
             raise

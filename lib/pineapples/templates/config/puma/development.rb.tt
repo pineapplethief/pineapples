@@ -4,7 +4,7 @@ threads(threads_count, threads_count)
 daemonize false
 
 # !Important: Puma can't bind to sockets created in VirtualBox shared folders
-bind "unix:///tmp/sockets/#{app_name}-puma.sock"
+bind "unix:///tmp/sockets/<%= app_name %>-puma.sock"
 pidfile 'tmp/pids/puma.pid'
 state_path 'tmp/pids/puma.state'
 
