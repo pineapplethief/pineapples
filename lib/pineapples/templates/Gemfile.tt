@@ -23,6 +23,9 @@ gem 'highline', require: false
 gem 'hiredis'
 gem 'pry-byebug'
 gem 'pry-rails'
+<% if pundit? -%>
+gem 'pundit'
+<% end -%>
 gem 'rack-cache'
 gem 'rack-canonical-host'
 gem 'redis', require: ['redis', 'redis/connection/hiredis']

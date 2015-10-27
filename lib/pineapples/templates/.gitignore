@@ -7,6 +7,7 @@
 
 /.env
 /.foreman
+/Procfile.dev
 
 /config/nginx.conf
 

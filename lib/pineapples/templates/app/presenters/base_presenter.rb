@@ -13,12 +13,12 @@ class BasePresenter < SimpleDelegator
   def h
     @view
   end
-
+<% if pundit? -%>
 
   protected
 
   def policy(record)
     h.policy(record)
   end
-
+<% end -%>
 end

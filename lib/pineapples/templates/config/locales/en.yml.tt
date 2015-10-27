@@ -17,3 +17,5 @@ en:
 
   titles:
     application: <%= app_name.humanize %>
+  menu:
+    home: 'Home'

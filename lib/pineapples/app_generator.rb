@@ -115,6 +115,7 @@ module Pineapples
       template 'Gemfile'
       copy_file 'Guardfile'
       copy_file 'Procfile'
+      template  'Procfile.dev'
       copy_file 'Rakefile'
       template 'README.md', 'README.md'
       if heroku?
@@ -168,6 +169,8 @@ module Pineapples
       keep_file 'log'
 
       empty_directory 'tmp/cache/assets'
+      empty_directory 'tmp/sockets'
+      create_file 'tmp/sockets/puma.sock'
 
       inside 'vendor/assets' do
         empty_directory_with_keep_file 'javascripts'

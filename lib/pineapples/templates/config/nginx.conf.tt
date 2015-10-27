@@ -1,107 +1,148 @@
-# Local gitignored nginx.conf file to run nginx with foreman for development
-# user www-data;
-worker_processes <%= shell 'grep processor /proc/cpuinfo | wc -l' %>;
+# Local gitignored nginx.conf file to run nginx in foreground mode with foreman for development
+user www-data;
+worker_processes auto;
+
+# Don't run nginx in daemon mode since we are using foreman
+daemon off;
+master_process on;
 
 events {
-  worker_connections <%= shell 'ulimit -n' %>;
+  worker_connections 8000;
+  multi_accept on;
 }
 
+# Maximum open file descriptors per process;
+# should be > worker_connections.
+worker_rlimit_nofile 8192;
+
 http {
-  # redirect urls starting with www to canonical address
-  server {
-    server_name ~^(?www\.);
-    return 301 $scheme://$host$request_uri;
+  upstream puma {
+    server unix:///tmp/sockets/<%= app_name %>-puma.sock;
   }
 
+  log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                  '$status $body_bytes_sent "$http_referer" '
+                  '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log <%= app_root %>/log/nginx.access.log main; #buffer=16kb;
+  error_log  <%= app_root %>/log/nginx.error.log;
+
   server {
-    listen [::]:80;
-    listen 80;
+    listen [::]:80 default_server deferred;
+    listen 80 default_server deferred;
 
     server_name <%= app_name %>.local;
 
     root <%= app_root %>/public;
 
-    # Specify a charset
-    # charset utf-8;
-    gzip_static on;
+    charset utf-8;
+
+    location / {
+      proxy_pass http://puma;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Real-IP $remote_addr;
+
+      # Log bots in separate log
+      if ($http_user_agent ~* (bot|crawl|\+http:)) {
+        access_log /var/log/nginx/$host.bots.log;
+      }
+
+      ###
+      # Cross-domain fonts enabled, see http://davidwalsh.name/cdn-fonts
+      #
+      if ($request_filename ~* ^.?/([^/]?)$) {
+        set $filename $1;
+      }
+      if ($filename ~* ^.*?\.(eot)|(ttf)|(woff)$) {
+        add_header Access-Control-Allow-Origin *;
+      }
+    }
   }
 
   ###
   # Basic settings
   #
-
-  # Don't run nginx in daemon mode since we are using foreman
-  daemon off;
-  master_process off;
-
   sendfile on;
   tcp_nopush on;
-  tcp_nodelay on;
-  keepalive_timeout 65;
   types_hash_max_size 2048;
   include /etc/nginx/mime.types;
   default_type application/octet-stream;
-  client_max_body_size 5M;
 
   ###
-  # SSL settings
+  # SSL
   #
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_prefer_server_ciphers on;
 
   ###
   # Timeouts
   #
-  keepalive_timeout       15;
-  client_header_timeout   10;
-  client_body_timeout     10;
-  send_timeout            10;
-  fastcgi_connect_timeout 5;
-  fastcgi_send_timeout    5;
+  keepalive_timeout       65;
+  keepalive_requests      100000;
+  client_header_timeout   20;
+  client_body_timeout     20;
+  send_timeout            30;
+  fastcgi_connect_timeout 15;
+  fastcgi_send_timeout    15;
   fastcgi_read_timeout    10;
 
   ###
-  # Request limiting
+  # Buffers
   #
-  limit_req      zone=reqPerSec burst=4 nodelay;
-  limit_req_zone $binary_remote_addr zone=reqPerSec:3m rate=3r/s;
+  client_body_buffer_size      128k;
+  client_max_body_size         10m;
+  client_header_buffer_size    1k;
+  large_client_header_buffers  4 4k;
+  output_buffers               1 32k;
+  postpone_output              1460;
 
   ###
-  # Logging settings
+  # SPDY
   #
-  access_log <%= app_root %>/log/access.log main buffer=32kb;
-  error_log  <%= app_root %>/log/error.log;
+  # Nginx's spdy module is compiled by default from 1.6
+  # SPDY only works on HTTPS connections
+
+  # Inform browser of SPDY availability
+  add_header Alternate-Protocol  443:npn-spdy/3;
+
+  # Adjust connection keepalive for SPDY clients:
+  spdy_keepalive_timeout 300; # up from 180 secs default
+
+  # enable SPDY header compression
+  spdy_headers_comp 6;
 
   ###
-  # Cross-domain fonts enabled, see http://davidwalsh.name/cdn-fonts
+  # Gzip
   #
-  if ($filename ~* ^.*?\.(eot)|(ttf)|(woff)$) {
-    add_header Access-Control-Allow-Origin *;
-  }
+  gzip      on;
+  gzip_vary on;
 
-  ###
-  # Gzip settings
-  #
-  gzip        on;
-  gzip_vary   on;
+  gzip_comp_level 5;
+  gzip_min_length 512;
+  gzip_buffers    4 8k;
+  gzip_disable    "msie6";
 
-  gzip_http_version 1.0;
-  gzip_comp_level   2;
-  gzip_min_length   1024;
-  gzip_buffers      4 8k;
-  gzip_disable      "msie6";
-
+  # Compress data even for clients that are connecting to us via proxies,
+  # identified by the "Via" header (required for CloudFront).
+  # gzip_proxied any;
   gzip_proxied expired no-cache no-store private auth;
-  gzip_types   text/plain
-               text/css
-               text/xml
-               application/x-javascript
-               application/xml;
-
-}
-
-location / {
-  if ($http_user_agent ~* (bot|crawl|\+http:)) {
-    access_log /var/log/nginx/$host.bots.log;
-  }
+  gzip_types  application/atom+xml
+              application/javascript
+              application/json
+              application/rss+xml
+              application/x-font-ttf
+              application/x-font-opentype
+              application/x-font-truetype
+              application/x-javascript
+              application/xml
+              font/eot
+              font/opentype
+              font/otf
+              image/bmp
+              image/svg+xml
+              image/x-icon
+              text/css
+              text/javascript
+              text/plain;
 }
