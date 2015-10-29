@@ -3,35 +3,34 @@ namespace :admin do
   task create: :environment do
     require 'highline/import'
 
+    class User
+      def reset_password
+        begin
+          password = ask('Password:         ') { |q| q.echo = 'x' }
+          password_confirmation = ask('Repeat password:  ') { |q| q.echo = 'x' }
+        end while password != password_confirmation
+        self.password              = password
+        self.password_confirmation = password
+      end
+    end
+
     begin
       email = ask('Email:  ')
       existing_user = User.find_by_email(email)
 
       # check if user account already exists
       if existing_user
-        admin = existing_user
+        user = existing_user
         # user already exists, ask for password reset
         reset_password = ask('User with this email already exists! Do you want to reset the password for this email? (Y/n)  ')
-        if yes?(reset_password)
-          begin
-            password = ask('Password:  ') { |q| q.echo = 'x' }
-            password_confirmation = ask('Repeat password:  ') { |q| q.echo = 'x' }
-          end while password != password_confirmation
-          admin.password              = password
-          admin.password_confirmation = password
-        end
+        user.reset_password if yes?(reset_password)
       else
         # create new user otherwise
-        admin = User.new(email: email, confirmed_at: Time.current)
-        begin
-          password = ask('Password:  ') { |q| q.echo = 'x' }
-          password_confirmation = ask('Repeat password:  ') { |q| q.echo = 'x' }
-        end while password != password_confirmation
-        admin.password              = password
-        admin.password_confirmation = password
+        user = User.new(email: email, confirmed_at: Time.current)
+        user.reset_password
       end
 
-      saved = admin.save
+      saved = user.save
       if !saved
         puts admin.errors.full_messages.join("\n")
         next
@@ -39,8 +38,8 @@ namespace :admin do
 
       grant_admin = ask('Do you want to grant Admin privileges to this account? (Y/n)  ')
       if yes?(grant_admin)
-        admin.role = :admin
-        say("\nYour account now has Admin privileges!") if admin.save
+        user.role = :admin
+        say("\nYour account now has Admin privileges!") if user.save
       end
     end while !saved
   end

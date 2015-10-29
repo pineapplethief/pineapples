@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
          :rememberable, :trackable, :validatable, :confirmable
          # :omniauthable, omniauth_providers: [:facebook]
          # :lockable, :timeoutable
+
 <% end -%>
 <% if user_role_field? -%>
   as_enum :role, [:guest, :regular, :trusted, :moderator, :admin],
@@ -19,10 +20,6 @@ class User < ActiveRecord::Base
 
   def guest?
     new_record?
-  end
-
-  def regular?
-    persisted? && role == :regular
   end
 <% end -%>
 

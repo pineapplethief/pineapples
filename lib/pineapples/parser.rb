@@ -3,9 +3,14 @@ module Pineapples
     def self.parse(args)
       options = OpenStruct.new
       options.app_name = nil
+      options.testing = false
 
       parser = OptionParser.new do |opts|
         opts.banner = 'Usage: pineapples [options] NEW_APP_DIRECTORY'
+
+        opts.on('-t', '--testing', 'Runs pineapples in testing mode, without git setup') do
+          options.testing = true
+        end
 
         opts.on('-h', '--help', 'Show pineapples usage') do
           self.usage_and_exit(opts)

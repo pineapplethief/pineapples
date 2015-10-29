@@ -20,7 +20,7 @@ module Pineapples
     setting :devise, type: :boolean, default: true,
             prompt: 'Wanna use Devise for authentication?'
 
-    setting :ajax_login, type: :boolean, default: false,
+    setting :ajax_login, type: :boolean, default: true,
             prompt: 'Wanna login via ajax using devise?'
 
     setting :pundit, type: :boolean, default: true,
@@ -57,6 +57,7 @@ module Pineapples
       @debug = options.debug || false
       @pretend = options.pretend || false
       @verbose = options.verbose || true
+      @testing = options.testing || false
 
       @settings = self.class.settings
     end
@@ -224,7 +225,7 @@ module Pineapples
     end
 
     def testing?
-      true
+      @testing
     end
 
     protected
