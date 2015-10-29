@@ -154,9 +154,7 @@ module Pineapples
     def create_misc_folders
       keep_file 'log'
 
-      empty_directory 'tmp/cache/assets'
-      empty_directory 'tmp/sockets'
-      create_file 'tmp/sockets/puma.sock'
+      empty_directory 'tmp/pids'
 
       inside 'vendor/assets' do
         empty_directory_with_keep_file 'javascripts'
@@ -165,49 +163,28 @@ module Pineapples
     end
 
     def setup_generated_app
-      create_rvm_gemset if use_rvm?
-      in_app_root do
-        # say_title 'Installing Dependencies'
-        puts "rvm gemset = #{shell 'rvm gemset name'}"
-        shell_with_clean_bundler_env 'bundle install'
+      copy_example_files
 
-        say_title 'Copying sample files'
-        copy_file '.example.env', '.env'
-        copy_file '.example.rspec', '.rspec'
+      create_rvm_gemset! if rvm_installed? & use_rvm?
+      shell_with_app_gemset 'bundle install'
 
-        # setup_git
+      say_title 'Preparing database'
+      shell_with_app_gemset 'bundle exec rake db:drop' if testing?
+      shell_with_app_gemset 'bundle exec rake db:setup'
+      shell_with_app_gemset 'bundle exec rake db:migrate'
 
-        # say_title 'Preparing database'
-        # shell 'rake db:setup'
-      end
-
-      # bundle exec: 'spring binstub --all'
-
-      #run_after_bundle_callbacks
+      setup_git if !testing?
     end
 
-    def create_rvm_gemset
-      if rvm_installed?
-        say_title 'Creating project-specific RVM gemset'
-        # using the rvm Ruby API, see:
-        # http://blog.thefrontiergroup.com.au/2010/12/a-brief-introduction-to-the-rvm-ruby-api/
-        if ENV['MY_RUBY_HOME'] && ENV['MY_RUBY_HOME'].include?('rvm')
-          gems_path = ENV['MY_RUBY_HOME'].split(/@/)[0].sub(/rubies/,'gems')
-          ENV['GEM_PATH'] = "#{gems_path}:#{gems_path}@global"
+    def copy_example_files
+      say_title 'Copying sample files'
+      copy_file '.example.env', '.env'
+      copy_file '.example.rspec', '.rspec'
+    end
 
-          RVM.use_from_path! File.dirname(__dir__)
-          puts "creating RVM gemset '#{app_name}'"
-          RVM.gemset_create app_name
-          begin
-            puts "switching to gemset '#{app_name}'"
-            RVM.gemset_use! app_name
-            # RVM.gemset
-          rescue => error
-            say "rvm failure: unable to use gemset #{app_name}, error: #{error}"
-            raise
-          end
-        end
-      end
+    def create_rvm_gemset!
+      say_title 'Creating project-specific RVM gemset'
+      shell "rvm gemset create #{app_name}"
     end
 
     def setup_git
@@ -215,8 +192,8 @@ module Pineapples
         say_title 'Setting up git repo'
         git :init
         git add: '-A .'
-        git commit: '-n -m "Generated project via pineapples gem"'
-        git checkout: '-b development'
+        git commit: %(-n -m "Generated Rails #{RAILS_VERSION.gsub('~> ', '')} project via pineapples gem")
+        git checkout: '-b dev'
         if git_repo_url.present?
           git remote: "add origin #{git_repo_url.shellescape}"
           git push: '-u origin --all'
@@ -244,6 +221,10 @@ module Pineapples
 
     def verbose?
       @verbose
+    end
+
+    def testing?
+      true
     end
 
     protected

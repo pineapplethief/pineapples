@@ -1,0 +1,4 @@
+# this wrapper script is used to kill processes listening to port 80
+# to avoid 'Address already in use' error from nginx
+sudo fuser -k 80/tcp;
+sudo nginx $1 $2

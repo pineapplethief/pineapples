@@ -1,2 +1,2 @@
-nginx: sudo nginx -c <%= app_root %>/config/nginx.conf
+nginx: bin/nginx -c <%= app_root %>/config/nginx.conf
 puma: bundle exec puma

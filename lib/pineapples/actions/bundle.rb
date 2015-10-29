@@ -1,8 +1,8 @@
 module Pineapples
   module Actions
-    def bundle(command, subcommands = nil, options = {})
+    def bundle(command, options = {})
       command = "#{command.first.first} #{command.first.last}" if command.is_a?(Hash)
-      say_status :shell, "bundle #{command} #{subcommands}"
+      say_status :bundle, "#{command}"
 
       _bundle_command = Gem.bin_path('bundler', 'bundle')
 

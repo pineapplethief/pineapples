@@ -38,5 +38,36 @@ module Pineapples
       end
     end
 
+    def shell_with_app_gemset(command, options = {})
+      # we have to use PTY pseudo terminal to able to read shell subprocess output asynchronously.
+      # Backticks and Kernel#system buffer output, and since bundle install takes forever to complete
+      # it's not very user-friendly and program would seem to hang.
+      # We just cd into project directory and invoke RVM in binary mode ('do' command)
+
+      # TODO: add support for rbenv gemsets
+      return if behaviour == :revoke
+      verbose = options.fetch(:verbose, verbose?)
+      execute = !options.fetch(:pretend, pretend?)
+
+      full_command = "cd #{File.basename(app_root)}; rvm . do #{command}"
+      say_status :shell, full_command, DEFAULT_COLOR, verbose
+
+      if execute
+        begin
+          PTY.spawn(full_command) do |reader, writer, pid|
+            loop do
+              break if !(line = reader.gets)
+              puts line
+            end
+            Process.wait(pid)
+          end
+        rescue PTY::ChildExited => error
+          puts 'The child process exited!'
+        rescue Errno::EIO => error
+          nil
+        end
+      end
+    end
+
   end
 end
