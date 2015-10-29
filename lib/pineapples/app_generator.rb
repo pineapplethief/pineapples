@@ -169,38 +169,45 @@ module Pineapples
     def setup_generated_app
       copy_example_files
 
-      create_rvm_gemset! if rvm_installed? & use_rvm?
+      create_rvm_gemset if rvm_installed? & use_rvm?
       shell_with_app_gemset 'bundle install'
 
-      say_title 'Preparing database'
-      shell_with_app_gemset 'bundle exec rake db:drop' if testing?
-      shell_with_app_gemset 'bundle exec rake db:setup'
-      shell_with_app_gemset 'bundle exec rake db:migrate'
+      setup_database
 
-      setup_git if !testing?
+      setup_git
     end
 
     def copy_example_files
       say_title 'Copying sample files'
-      copy_file '.example.env', '.env'
+      template '.example.env', '.env'
       copy_file '.example.rspec', '.rspec'
     end
 
-    def create_rvm_gemset!
+    def create_rvm_gemset
       say_title 'Creating project-specific RVM gemset'
       shell "rvm gemset create #{app_name}"
+    end
+
+    def setup_database
+      say_title 'Preparing database'
+      shell_with_app_gemset 'bundle exec rake db:drop' if testing?
+      shell_with_app_gemset 'bundle exec rake db:setup'
+      shell_with_app_gemset 'bundle exec rake db:migrate'
     end
 
     def setup_git
       if !preexisting_git_repo?
         say_title 'Setting up git repo'
-        git :init
-        git add: '-A .'
-        git commit: %(-n -m "Generated Rails #{RAILS_VERSION.gsub('~> ', '')} project via pineapples gem")
-        git checkout: '-b dev'
-        if git_repo_url.present?
-          git remote: "add origin #{git_repo_url.shellescape}"
-          git push: '-u origin --all'
+        in_app_root do
+          git :init
+          git add: '-A .'
+          git commit: %(-n -m "Generated Rails #{RAILS_VERSION.gsub('~> ', '')} project via pineapples gem")
+          git checkout: '-b staging'
+          git checkout: '-b dev'
+          if git_repo_url.present?
+            git remote: "add origin #{git_repo_url.shellescape}"
+            git push: '-u origin --all'
+          end
         end
       end
     end

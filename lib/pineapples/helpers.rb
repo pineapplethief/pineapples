@@ -6,6 +6,18 @@ module Pineapples
       user_role_field? || devise?
     end
 
+    def erb?
+      template_engine.erb?
+    end
+
+    def haml?
+      template_engine.haml?
+    end
+
+    def slim?
+      template_engine.slim?
+    end
+
     protected
 
     def humanized_application_name
@@ -35,11 +47,8 @@ module Pineapples
     end
 
     def preexisting_git_repo?
-      if @preexisting_git_repo.nil?
-        git_path = File.expand_path('.git', app_root)
-        @preexisting_git_repo = File.exist?(git_path)
-      end
-      @preexisting_git_repo
+      git_path = File.expand_path('.git', app_root)
+      File.exist?(git_path)
     end
 
     def rbenv_installed?
