@@ -1,5 +1,4 @@
 class Auth::RegistrationsController < Devise::RegistrationsController
-
 <% if ajax_login? -%>
   respond_to :html, :js
 

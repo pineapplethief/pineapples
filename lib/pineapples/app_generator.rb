@@ -66,6 +66,9 @@ module Pineapples
       valid_const! && check_target!
       create_app_root
 
+      puts ajax_login
+      puts ajax_login?
+
       # ask_user_settings
 
       create_root_files

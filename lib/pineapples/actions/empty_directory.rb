@@ -25,7 +25,7 @@ module Pineapples
       def initialize(generator, target, options = {})
         super(generator, options)
 
-        @target = Target.new(target, self)
+        @target = Target.new(target, generator)
         @skip = @target.skip?
       end
 

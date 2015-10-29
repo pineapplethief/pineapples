@@ -1,6 +1,6 @@
 class Auth::ConfirmationsController < Devise::ConfirmationsController
 
-  # most often it's needed to customize url where to redirect user after confirmation
+  # most often it's needed to customize url of location to redirect user to after confirmation
 
   # protected
 
