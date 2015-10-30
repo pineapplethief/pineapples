@@ -7,15 +7,15 @@ module Pineapples
     end
 
     def erb?
-      template_engine.erb?
+      template_engine == :erb
     end
 
     def haml?
-      template_engine.haml?
+      template_engine == :haml
     end
 
     def slim?
-      template_engine.slim?
+      template_engine == :slim
     end
 
     protected

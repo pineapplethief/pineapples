@@ -8,6 +8,8 @@ search:
 ignore_unused:
   - activerecord.*
   - date.*
+  - devise.*
+  - kaminari.*
   - simple_form.*
   - time.*
   - titles.*

@@ -11,7 +11,7 @@ module Pineapples
 
         if execute
           target_path = File.expand_path(target, app_root)
-          target_path = File.join(target_path, recursive_mask) if recursive
+          target_path = File.join(target_path, '**') if recursive
           shell "find #{target_path} -name \\*.erb -print | sed 'p;s/.erb$/.haml/' | xargs -n2 html2haml",
                  verbose: false
         end

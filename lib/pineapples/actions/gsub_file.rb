@@ -23,13 +23,15 @@ module Pineapples
       verbose = options.fetch(:verbose, verbose?)
       execute = options.fetch(:pretend, execute?)
 
-      path = File.expand_path(path, app_root)
+      fullpath = File.expand_path(path, app_root)
+      raise Error, "File #{path} doesn't exist!" if !File.exist?(fullpath)
+
       say_status :gsub, relative_to_app_root(path), :light_yellow, verbose
 
       if execute
-        content = File.binread(path)
+        content = File.binread(fullpath)
         content.gsub!(flag, *args, &block)
-        File.open(path, 'wb') { |file| file.write(content) }
+        File.open(fullpath, 'wb') { |file| file.write(content) }
       end
     end
   end

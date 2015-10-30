@@ -23,14 +23,6 @@ module Pineapples
       validate_options_type!
       validate_type!(default)
       validate_value_in_options!(default)
-
-      if has_options?
-        options.each do |option|
-          define_singleton_method :"#{option}?" do
-            value == option
-          end
-        end
-      end
     end
 
     def value=(setting)

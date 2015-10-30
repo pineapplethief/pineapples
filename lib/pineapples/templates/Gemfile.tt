@@ -1,3 +1,7 @@
+# Addressing this issue: https://rorsecurity.info/portfolio/rubygems-security
+# TODO: remove when Bundler 2.0 comes
+git_source(:github) { |repo| "https://github.com/#{repo.include?('/') ? "#{repo}/#{repo}" : repo}.git" }
+
 source 'https://rubygems.org'
 
 ruby '<%= RUBY_VERSION %>'
@@ -16,11 +20,13 @@ gem 'devise'
 <% end -%>
 gem 'email_validator'
 gem 'fast_blank'
-gem 'fixme', github: 'henrik/fixme'
+gem 'fixme'
 <% if user_role_field? -%>
 gem 'highline', require: false
 <% end -%>
 gem 'hiredis'
+gem 'i18n-tasks', '~> 0.9.0'
+gem 'kaminari'
 gem 'pry-byebug'
 gem 'pry-rails'
 <% if pundit? -%>
@@ -71,6 +77,8 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'guard-livereload', '~> 2.4', require: false
+  gem 'spring'
+  gem 'spring-commands-rspec'
   gem 'rack-livereload', github: 'johnbintz/rack-livereload'
   gem 'rb-fsevent', group: :darwin, require: false
   gem 'rb-inotify', group: :linux, require: false
@@ -78,15 +86,18 @@ group :development do
 end
 
 group :test do
-  # gem 'capybara'
-  # gem 'database_cleaner'
-  # gem 'factory_girl_rails'
-  # gem 'rspec-rails', '~> 3.2'
-  # gem 'shoulda'
+  gem 'capybara-webkit'
+  gem 'database_cleaner'
+  gem 'email_spec'
+  gem 'rspec-rails', '~> 3.2'
+  gem 'shoulda-matchers', '~> 3.0', require: false
+  gem 'simplecov', require: false
+  gem 'timecop'
+  gem 'webmock'
 end
 
-group :development, :test do
-  gem 'spring'
+group :development do
+  gem 'factory_girl_rails'
   gem 'web-console', '~> 2.0'
 end
 
