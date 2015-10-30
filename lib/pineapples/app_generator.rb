@@ -96,19 +96,20 @@ module Pineapples
 
     def create_root_files
       create_file '.ruby-version', Pineapples::RUBY_VERSION
-      create_file '.ruby-gemset', app_name
-      copy_file '.editor-config'
-      template '.example.env'
-      copy_file '.example.rspec'
-      copy_file '.gitignore'
-      copy_file 'browserlist'
-      template 'config.ru'
-      template 'Gemfile'
-      copy_file 'Guardfile'
-      copy_file 'Procfile'
-      template  'Procfile.dev'
-      copy_file 'Rakefile'
-      template 'README.md', 'README.md'
+      create_file '.ruby-gemset',  app_name
+      copy_file   '.editor-config'
+      template    '.example.env'
+      copy_file   '.example.rspec'
+      copy_file   '.gitignore'
+      template    '.simplecov'
+      copy_file   'browserlist'
+      template    'config.ru'
+      template    'Gemfile'
+      copy_file   'Guardfile'
+      copy_file   'Procfile'
+      template    'Procfile.dev'
+      copy_file   'Rakefile'
+      template    'README.md'
       if heroku?
         copy_file '.buildpacks'
         copy_file 'Aptfile'
@@ -163,6 +164,9 @@ module Pineapples
         empty_directory_with_keep_file 'jobs'
         empty_directory_with_keep_file 'mailers'
         empty_directory_with_keep_file 'models'
+        empty_directory_with_keep_file 'policies' if pundit?
+        empty_directory_with_keep_file 'presenters'
+        empty_directory_with_keep_file 'services'
         empty_directory_with_keep_file 'lib'
 
         empty_directory_with_keep_file 'support'

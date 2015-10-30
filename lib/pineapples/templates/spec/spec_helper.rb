@@ -1,7 +1,4 @@
-if ENV.fetch('COVERAGE', false)
-  require 'simplecov'
-  SimpleCov.start 'rails'
-end
+require 'simple_cov' if ENV.fetch('COVERAGE', false)
 
 RSpec.configure do |config|
   config.include AbstractController::Translation

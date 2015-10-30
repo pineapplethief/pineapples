@@ -1,6 +1,9 @@
 Rails.application.configure do
   config.cache_classes = false
+
+  # Avoid Spring issues when running simple_cov
   config.eager_load = false
+  config.serve_static_files = false
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true

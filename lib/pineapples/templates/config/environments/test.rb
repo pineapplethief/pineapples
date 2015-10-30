@@ -1,9 +1,9 @@
 Rails.application.configure do
   config.cache_classes = true
 
-  # preload Rails before running tests to leverage spring
-  # TODO: figure this out
+  # Avoid Spring issues when running simple_cov
   config.eager_load = false
+  config.serve_static_files = false
 
   # Configure static file server for tests with Cache-Control for performance.
   config.serve_static_files   = true

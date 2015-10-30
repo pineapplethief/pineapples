@@ -1,0 +1,10 @@
+SimpleCov.start 'rails' do
+  add_group 'Presenters', 'app/presenters'
+<% if pundit? -%>
+  add_group 'Policies', 'app/policies'
+<% end -%>
+  add_group 'Services', 'app/services'
+
+  add_filter 'lib/templates/'
+  # any custom configs like groups and filters can be here at a central place
+end

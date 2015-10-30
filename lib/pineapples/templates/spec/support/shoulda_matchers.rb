@@ -1,3 +1,5 @@
+require 'shoulda/matchers'
+
 # Collection of useful matchers for testing web-apps
 # --------------
 # Docs:
