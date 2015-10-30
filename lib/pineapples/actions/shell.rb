@@ -56,15 +56,16 @@ module Pineapples
         begin
           PTY.spawn(full_command) do |reader, writer, pid|
             loop do
-              break if !(line = reader.gets)
+              line = reader.gets
+              break if !line
               puts line
             end
             Process.wait(pid)
           end
-        rescue PTY::ChildExited => error
-          puts 'The child process exited!'
         rescue Errno::EIO => error
           nil
+        rescue PTY::ChildExited => error
+          puts 'The child process exited!'
         end
       end
     end

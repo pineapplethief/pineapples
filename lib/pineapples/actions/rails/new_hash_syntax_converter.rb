@@ -2,7 +2,7 @@ module Pineapples
   module Actions
     FILE_WITH_RUBY_CODE = '.rb|.erb|.haml|.slim|.rake'
     def convert_directory_to_new_hash_syntax(target, options = {})
-      recursive = options.delete(:recursive, true)
+      recursive = options.delete(:recursive) || true
 
       target_fullpath = File.expand_path(target, app_root)
       target_fullpath = File.join(target_fullpath, '**') if recursive

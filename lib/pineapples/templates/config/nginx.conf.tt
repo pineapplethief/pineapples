@@ -118,15 +118,14 @@ http {
   gzip      on;
   gzip_vary on;
 
-  gzip_comp_level 5;
+  gzip_comp_level 6;
   gzip_min_length 512;
   gzip_buffers    4 8k;
   gzip_disable    "msie6";
-
+  gzip_proxied    expired no-cache no-store private auth;
   # Compress data even for clients that are connecting to us via proxies,
   # identified by the "Via" header (required for CloudFront).
   # gzip_proxied any;
-  gzip_proxied expired no-cache no-store private auth;
   gzip_types  application/atom+xml
               application/javascript
               application/json

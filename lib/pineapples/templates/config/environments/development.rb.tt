@@ -44,9 +44,11 @@ Rails.application.configure do
 
   config.action_mailer.raise_delivery_errors = true
   # config.action_mailer.delivery_method = :test
+<% if web_console? -%>
 
   config.web_console.whitelisted_ips = '192.168.0.0/16'
   config.web_console.whiny_requests = false
+<% end -%>
 
   # Settings specified here will take precedence over those in config/application.rb.
   live_reload_options = {
@@ -60,7 +62,7 @@ Rails.application.configure do
     #ignore:           [ %r{dont/modify\.html$} ]
   }
 
-  config.middleware.insert_after(ActionDispatch::Static, Rack::LiveReload, live_reload_options)
+  # config.middleware.insert_after(ActionDispatch::Static, Rack::LiveReload, live_reload_options)
 
   # Raises error for missing translations
   config.action_view.raise_on_missing_translations = true

@@ -23,6 +23,7 @@ Dir[Rails.root.join('spec/support/*.rb')].each { |file| require file }
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
+  config.include AbstractController::Translation
   config.include Devise::TestHelpers, type: :controller
 
   config.infer_base_class_for_anonymous_controllers = false

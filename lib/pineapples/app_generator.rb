@@ -47,6 +47,9 @@ module Pineapples
     setting :staging_hostname, type: :string, default: '',
             prompt: 'Enter hostname for staging site'
 
+    setting :web_console, type: :boolean, default: false,
+            prompt: 'Do you want to use web-console gem?'
+
     attr_accessor :app_name,
                   :app_root,
                   :settings
@@ -127,8 +130,10 @@ module Pineapples
 
     def create_bin_files
       directory 'bin'
-      shell 'chmod -v 755 bin'
-      shell 'cmmod -v 644 bin/*'
+      in_app_root do
+        shell 'chmod -v 755 bin'
+        shell 'chmod -v 644 bin/*'
+      end
     end
 
     def create_config_files
@@ -169,7 +174,6 @@ module Pineapples
         empty_directory_with_keep_file 'services'
         empty_directory_with_keep_file 'lib'
 
-        empty_directory_with_keep_file 'support'
         empty_directory_with_keep_file 'support/features'
         empty_directory_with_keep_file 'support/matchers'
         empty_directory_with_keep_file 'support/mixins'
@@ -220,7 +224,8 @@ module Pineapples
     end
 
     def setup_gems
-      shell_with_app_gemset 'bundle exec rails g kaminari:views default'
+      shell_with_app_gemset 'spring stop'
+      shell_with_app_gemset 'rails g kaminari:views default'
     end
 
     def to_new_hash_syntax!

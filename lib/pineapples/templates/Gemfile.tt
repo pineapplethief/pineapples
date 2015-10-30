@@ -1,6 +1,6 @@
 # Addressing this issue: https://rorsecurity.info/portfolio/rubygems-security
 # TODO: remove when Bundler 2.0 comes
-git_source(:github) { |repo| "https://github.com/#{repo.include?('/') ? "#{repo}/#{repo}" : repo}.git" }
+git_source(:github) { |repo| "https://github.com/#{repo.include?('/') ? repo : "#{repo}/#{repo}"}.git" }
 
 source 'https://rubygems.org'
 
@@ -98,7 +98,9 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.2'
   gem 'spring'
   gem 'spring-commands-rspec'
-  # gem 'web-console', '~> 2.0'
+<% if web_console? -%>
+  gem 'web-console', '~> 2.0'
+<% end -%>
 end
 
 # bundle exec rake doc:rails generates the API under doc/api.

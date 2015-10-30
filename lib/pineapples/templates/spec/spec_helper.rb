@@ -1,8 +1,6 @@
 require 'simple_cov' if ENV.fetch('COVERAGE', false)
 
 RSpec.configure do |config|
-  config.include AbstractController::Translation
-
   config.disable_monkey_patching!
 
   config.expect_with :rspec do |expectations|

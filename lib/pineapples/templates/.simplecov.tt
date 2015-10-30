@@ -5,6 +5,7 @@ SimpleCov.start 'rails' do
 <% end -%>
   add_group 'Services', 'app/services'
 
-  add_filter 'lib/templates/'
+  add_filter '/spec/'
+  add_filter '/lib/templates/'
   # any custom configs like groups and filters can be here at a central place
 end

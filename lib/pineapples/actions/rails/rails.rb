@@ -1,5 +1,6 @@
 require_relative 'erb_converters'
 require_relative 'copy_migration'
+require_relative 'new_hash_syntax_converter'
 
 module Pineapples
   module Actions
