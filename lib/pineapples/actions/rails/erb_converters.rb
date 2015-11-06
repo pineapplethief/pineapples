@@ -5,6 +5,7 @@ module Pineapples
         recursive = options.fetch(:recursive, true)
         verbose = options.fetch(:verbose, verbose?)
         execute = !options.fetch(:pretend, pretend?)
+        preserve = options.fetch(:keep_old_files, false)
 
         description = 'Convert ERB views to HAML'
         say_status(:erb2haml, description, verbose)
@@ -14,6 +15,7 @@ module Pineapples
           target_path = File.join(target_path, '**') if recursive
           shell "find #{target_path} -name \\*.erb -print | sed 'p;s/.erb$/.haml/' | xargs -n2 html2haml",
                  verbose: false
+          shell "rm -r #{target_path}/*.erb" if !preserve
         end
       end
 
@@ -21,6 +23,7 @@ module Pineapples
         recursive = options.fetch(:recursive, true)
         verbose = options.fetch(:verbose, verbose?)
         execute = !options.fetch(:pretend, pretend?)
+        preserve = options.falsetch(:keep_old_files, false)
 
         description = 'Convert ERB views to SLIM'
         say_status(:erb2slim, description, verbose)
@@ -29,7 +32,7 @@ module Pineapples
           erb2haml(target, options)
           target_path = File.expand_path(target, app_root)
           target_path = File.join(target_path, '**') if recursive
-          shell "haml2slim #{target_path} --delete --trace", verbose: false
+          shell "haml2slim #{target_path} #{preserve ? '' : '--delete'} --trace", verbose: false
         end
       end
     end

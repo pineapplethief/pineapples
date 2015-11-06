@@ -49,7 +49,7 @@ module Pineapples
       verbose = options.fetch(:verbose, verbose?)
       execute = !options.fetch(:pretend, pretend?)
 
-      full_command = "cd #{File.basename(app_root)}; rvm . do #{command}"
+      full_command = "export DISABLE_SPRING=0; cd #{File.basename(app_root)}; rvm . do #{command}"
       say_status :shell, full_command, DEFAULT_COLOR, verbose
 
       if execute

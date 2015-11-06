@@ -224,8 +224,16 @@ module Pineapples
     end
 
     def setup_gems
-      shell_with_app_gemset 'spring stop'
       shell_with_app_gemset 'rails g kaminari:views default'
+      erb2haml 'app/views/kaminari'
+    end
+
+    def convert_views
+      if haml?
+        # TODO: convert all views to haml
+      elsif slim?
+        # TODO: convert all views to slim
+      end
     end
 
     def to_new_hash_syntax!
