@@ -13,7 +13,7 @@ module Pineapples
     #
     def remove_file(path, options = {})
       return unless behaviour == :invoke
-      path  = File.expand_path(path, destination_root)
+      path  = File.expand_path(path, app_root)
 
       message = relative_to_app_root(path)
       verbose = options.fetch(:verbose, verbose?)

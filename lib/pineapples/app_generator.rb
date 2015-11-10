@@ -132,7 +132,7 @@ module Pineapples
       directory 'bin'
       in_app_root do
         shell 'chmod -v 755 bin'
-        shell 'chmod -v 644 bin/*'
+        shell 'chmod -v +x bin/*'
       end
     end
 
@@ -225,13 +225,14 @@ module Pineapples
 
     def setup_gems
       shell_with_app_gemset 'rails g kaminari:views default'
-      erb2haml 'app/views/kaminari'
     end
 
     def convert_views
       if haml?
+        erb2haml 'app/views/kaminari'
         # TODO: convert all views to haml
       elsif slim?
+        erb2slim 'app/views/kaminari'
         # TODO: convert all views to slim
       end
     end

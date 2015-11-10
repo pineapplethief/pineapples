@@ -15,7 +15,10 @@ module Pineapples
           target_path = File.join(target_path, '**') if recursive
           shell "find #{target_path} -name \\*.erb -print | sed 'p;s/.erb$/.haml/' | xargs -n2 html2haml",
                  verbose: false
-          shell "rm -r #{target_path}/*.erb" if !preserve
+          if !preserve
+            erb_pattern = File.join(target_path, '*.erb')
+            Dir.glob(erb_pattern).each { |file| ::FileUtils.rm_f(file) }
+          end
         end
       end
 
@@ -35,6 +38,7 @@ module Pineapples
           shell "haml2slim #{target_path} #{preserve ? '' : '--delete'} --trace", verbose: false
         end
       end
+
     end
   end
 end

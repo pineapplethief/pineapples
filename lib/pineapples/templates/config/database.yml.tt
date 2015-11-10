@@ -1,6 +1,5 @@
 development: &default
   adapter: postgresql
-  host: localhost
   database: <%= app_name %>_dev
   encoding: utf8
   min_messages: warning
